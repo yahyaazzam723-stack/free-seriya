@@ -45,14 +45,16 @@
         }
 
         .bottom-syria-text {
-            position: fixed; top: 170px; left: 0; width: 100%;
-            text-align: center; font-size: 1.7rem; font-weight: 900;
+            position: fixed; top: 50px; left: 0; width: 100%;
+            text-align: center; font-size: 1.5rem; font-weight: 900;
             color: #00ff84; z-index: 1999; pointer-events: none;
             text-shadow: 0 5px 15px rgba(0,0,0,0.8), 0 0 20px rgba(0, 255, 132, 0.3);
+            padding: 20px 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
         }
 
         .menu-btn {
-            position: fixed; top: 220px; right: 15px; cursor: pointer; z-index: 2001; 
+            position: fixed; top: 65px; right: 15px; cursor: pointer; z-index: 2001; 
             background: white; border: 2px solid var(--syria-green); color: var(--syria-red); 
             border-radius: 12px; width: 40px; padding: 5px 0; text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
@@ -67,31 +69,36 @@
 
         .menu-item { padding: 15px; margin-bottom: 15px; border-radius: 12px; cursor: pointer; background: rgba(255,255,255,0.05); text-align: center; font-weight: bold; border-right: 4px solid var(--syria-green); }
 
+        /* تعديل هنا لثبات المحتوى */
         .page { 
             display: none; flex-direction: column; align-items: center; justify-content: flex-start; 
-            min-height: 100vh; padding-top: 240px; padding-bottom: 120px; box-sizing: border-box; 
+            min-height: 100vh; 
+            padding-top: 150px; /* مسافة مناسبة تحت العناوين */
+            padding-bottom: 100px; box-sizing: border-box; 
         }
         .page.active { display: flex; }
 
-        .card { background: var(--glass); border-radius: 25px; padding: 25px; width: 88%; max-width: 400px; text-align: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.7); backdrop-filter: blur(10px); }
+        .card { background: var(--glass); border-radius: 25px; padding: 20px; width: 88%; max-width: 400px; text-align: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.7); backdrop-filter: blur(10px); }
 
-        .eagle-btn { width: 85px; height: 85px; border-radius: 50%; border: 3px solid var(--syria-green); margin: 15px auto; cursor: pointer; background: white; transition: 0.6s; }
+        .eagle-btn { width: 75px; height: 75px; border-radius: 50%; border: 3px solid var(--syria-green); margin: 10px auto; cursor: pointer; background: white; transition: 0.6s; }
         .eagle-btn.rotate { transform: rotate(180deg); }
 
-        .input-main { background: white; color: #000; border: 2px solid var(--syria-green); width: 100%; padding: 12px; border-radius: 12px; font-size: 1.3rem; font-weight: bold; text-align: center; outline: none; box-sizing: border-box; }
+        .input-main { background: white; color: #000; border: 2px solid var(--syria-green); width: 100%; padding: 10px; border-radius: 12px; font-size: 1.2rem; font-weight: bold; text-align: center; outline: none; box-sizing: border-box; }
 
-        .number-words { display: block; font-size: 0.8rem; color: #00ff84; margin: 8px 0; min-height: 1rem; font-weight: bold; }
+        .number-words { display: block; font-size: 0.75rem; color: #00ff84; margin: 5px 0; min-height: 1rem; font-weight: bold; }
 
-        .res-box { background: rgba(0,0,0,0.6); padding: 15px; border-radius: 15px; margin-top: 15px; border: 1px solid var(--syria-green); }
+        .res-box { background: rgba(0,0,0,0.6); padding: 12px; border-radius: 15px; margin-top: 10px; border: 1px solid var(--syria-green); }
 
-        .footer { text-align: center; padding: 12px; background: rgba(0,0,0,0.95); width: 100%; position: fixed; bottom: 0; left: 0; z-index: 1000; border-top: 2px solid var(--syria-green); }
+        .footer { text-align: center; padding: 10px; background: rgba(0,0,0,0.95); width: 100%; position: fixed; bottom: 0; left: 0; z-index: 1000; border-top: 2px solid var(--syria-green); }
         .footer a { color: #00ff84; text-decoration: none; font-weight: bold; }
-        .disclaimer { font-size: 0.75rem; color: #ffbcbc; margin-top: 8px; line-height: 1.3; }
+        .disclaimer { font-size: 0.7rem; color: #ffbcbc; margin-top: 5px; line-height: 1.2; }
         
         input[type="range"] { width: 100%; accent-color: var(--syria-green); }
-        .mode-container { display: flex; gap: 10px; margin-bottom: 20px; }
-        .mode-btn { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid white; background: none; color: white; cursor: pointer; font-weight: bold; }
+        .mode-container { display: flex; gap: 8px; margin-bottom: 15px; }
+        .mode-btn { flex: 1; padding: 8px; border-radius: 10px; border: 1px solid white; background: none; color: white; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
         .mode-btn.active { background: var(--syria-green); border-color: var(--syria-green); }
+
+        h2 { margin-top: 0; font-size: 1.4rem; color: #fff; }
     </style>
 </head>
 <body>
@@ -120,7 +127,7 @@
 
     <div id="p3" class="page active">
         <div class="card">
-            <h2>تقسيم الفاتورة</h2>
+            <h2>⚖️ تقسيم الفاتورة</h2>
             <div class="mode-container">
                 <button id="mNew" class="mode-btn active" onclick="setSplitMode('NEW')">سأدفع جديد</button>
                 <button id="mOld" class="mode-btn" onclick="setSplitMode('OLD')">سأدفع قديم</button>
@@ -129,38 +136,39 @@
             <span id="w4" class="number-words"></span>
             
             <div style="margin:10px 0;"> 
-                <b id="rV">50%</b>
-                <input type="range" id="splitRange" min="0" max="100" value="50" step="5" oninput="document.getElementById('rV').innerText=this.value+'%'">
+                <span style="font-size:0.9rem">نسبة المساهمة:</span> <b id="rV">50%</b>
+                <input type="range" id="splitRange" min="0" max="100" value="50" step="5" oninput="document.getElementById('rV').innerText=this.value+'%'; doSplit();">
             </div>
 
             <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" id="eagle3" onclick="handleEagleClick('eagle3', doSplit)">
             
             <div class="res-box">
-                <div id="sPay" style="font-weight:bold; font-size:1.2rem; color: white;">حصتك: 0</div>
-                <div id="sRest" style="color:#00ff84; font-weight:bold; margin-top:5px;">العملة القديمة: 0</div>
+                <div id="sPay" style="font-weight:bold; font-size:1.1rem; color: white;">حصتك: 0</div>
+                <div id="sRest" style="color:#00ff84; font-weight:bold; margin-top:5px; font-size:0.9rem;">العملة القديمة: 0</div>
             </div>
         </div>
     </div>
 
     <div id="p1" class="page">
         <div class="card">
-            <h2>المحول السريع</h2>
-            <input type="number" id="oldIn" class="input-main" placeholder="مبلغ قديم" oninput="activeConvert='old'; updateWords(this, 'w1')">
+            <h2>🔄 المحول السريع</h2>
+            <input type="number" id="oldIn" class="input-main" placeholder="مبلغ قديم" oninput="activeConvert='old'; updateWords(this, 'w1'); doQuick();">
             <span id="w1" class="number-words"></span>
             <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" id="eagle1" onclick="handleEagleClick('eagle1', doQuick)">
-            <input type="number" id="newIn" class="input-main" placeholder="مبلغ جديد" oninput="activeConvert='new'; updateWords(this, 'w2')">
+            <input type="number" id="newIn" class="input-main" placeholder="مبلغ جديد" oninput="activeConvert='new'; updateWords(this, 'w2'); doQuick();">
             <span id="w2" class="number-words"></span>
         </div>
     </div>
 
     <div id="p2" class="page">
         <div class="card">
-            <h2>صرف الدولار</h2>
+            <h2>💵 صرف الدولار</h2>
+            <label style="font-size: 0.8rem; display: block; margin-bottom: 5px;">سعر الصرف (جديد):</label>
             <input type="number" id="uRate" class="input-main" value="15.5" style="margin-bottom:10px">
-            <input type="number" id="uAmt" class="input-main" placeholder="المبلغ بالدولار $" oninput="updateWords(this, 'w3')">
+            <input type="number" id="uAmt" class="input-main" placeholder="المبلغ بالدولار $" oninput="updateWords(this, 'w3'); doUsd();">
             <span id="w3" class="number-words"></span>
             <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" id="eagle2" onclick="handleEagleClick('eagle2', doUsd)">
-            <div id="uRes" class="res-box" style="color:#00ff84">0 ل.س جديد</div>
+            <div id="uRes" class="res-box" style="color:#00ff84; font-weight:bold; font-size:1.2rem;">0 ل.س جديد</div>
         </div>
     </div>
 
@@ -181,7 +189,7 @@
         function showPage(id) { 
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            toggleMenu();
+            document.getElementById('sideMenu').classList.remove('active');
         }
 
         function handleEagleClick(id, callback) {
@@ -218,7 +226,7 @@
             if(activeConvert === 'old' && o.value) { 
                 n.value = Math.round(o.value / 100); 
                 updateWords(n, 'w2'); 
-            } else if(n.value) { 
+            } else if(activeConvert === 'new' && n.value) { 
                 o.value = Math.round(n.value * 100); 
                 updateWords(o, 'w1'); 
             }
@@ -234,15 +242,12 @@
             splitMode = m;
             document.getElementById('mNew').className = m === 'NEW' ? 'mode-btn active' : 'mode-btn';
             document.getElementById('mOld').className = m === 'OLD' ? 'mode-btn active' : 'mode-btn';
-            // تصفير النتائج عند تغيير الوضع لتفادي اللبس
-            document.getElementById('sPay').innerText = "حصتك: 0";
-            document.getElementById('sRest').innerText = m === 'NEW' ? "العملة القديمة: 0" : "العملة الجديدة: 0";
+            doSplit();
         }
 
         function doSplit() {
             let totalOld = parseFloat(document.getElementById('splitTotal').value) || 0;
             let ratio = document.getElementById('splitRange').value / 100;
-            
             let shareOld = totalOld * ratio;
             let restOld = totalOld - shareOld;
 
