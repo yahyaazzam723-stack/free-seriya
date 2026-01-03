@@ -56,6 +56,8 @@
             background: white; border: 2px solid var(--syria-green); color: var(--syria-red); 
             border-radius: 12px; width: 40px; padding: 5px 0; text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 0.7rem; line-height: 1;
         }
 
         .side-menu {
@@ -84,6 +86,10 @@
 
         .res-box { background: rgba(0,0,0,0.6); padding: 15px; border-radius: 15px; margin-top: 15px; border: 1px solid var(--syria-green); }
 
+        .op-selector { display: flex; justify-content: space-between; gap: 8px; margin: 15px 0; }
+        .op-btn { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--syria-green); background: #111; color: white; font-size: 1.2rem; cursor: pointer; }
+        .op-btn.active { background: var(--syria-green); }
+
         .range-container { margin: 20px 0; text-align: right; }
         .range-label { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px; }
         
@@ -91,8 +97,6 @@
         #sldOld { accent-color: var(--syria-red); }
 
         .footer { text-align: center; padding: 12px; background: rgba(0,0,0,0.95); width: 100%; position: fixed; bottom: 0; left: 0; z-index: 1000; border-top: 2px solid var(--syria-green); }
-        .footer a { color: #00ff84; text-decoration: none; font-weight: bold; }
-        .disclaimer { font-size: 0.75rem; color: #ffbcbc; margin-top: 8px; line-height: 1.3; }
     </style>
 </head>
 <body>
@@ -114,43 +118,15 @@
 
     <div id="sideMenu" class="side-menu">
         <div class="menu-item" onclick="showPage('p1')">🔄 المحول السريع</div>
-        <div class="menu-item" onclick="showPage('p2')">💵 صرف الدولار</div>
         <div class="menu-item" onclick="showPage('p3')">⚖️ تقسيم الفاتورة</div>
+        <div class="menu-item" onclick="showPage('p4')">🔢 الحاسبة المختلطة</div>
+        <div class="menu-item" onclick="showPage('p2')">💵 صرف الدولار</div>
         <div class="menu-item" onclick="toggleMenu()" style="background:var(--syria-red); margin-top:40px;">إغلاق</div>
     </div>
 
-    <div id="p3" class="page active">
+    <div id="p1" class="page active">
         <div class="card">
-            <h2>⚖️ تقسيم الفاتورة</h2>
-            <input type="number" id="splitTotal" class="input-main" placeholder="المبلغ بالقديم" oninput="updateWords(this, 'w4'); doSplit();">
-            <span id="w4" class="number-words"></span>
-            
-            <div class="range-container">
-                <div class="range-label" style="color: #00ff84;">
-                    <span>سأدفع بالجديد:</span>
-                    <span id="txtNew">0 %</span>
-                </div>
-                <input type="range" id="sldNew" min="0" max="100" value="0" step="5" oninput="syncSliders('NEW')">
-
-                <div class="range-label" style="color: #ff4d4d;">
-                    <span>سأدفع بالقديم:</span>
-                    <span id="txtOld">0 %</span>
-                </div>
-                <input type="range" id="sldOld" min="0" max="100" value="0" step="5" oninput="syncSliders('OLD')">
-            </div>
-
-            <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" id="eagle3" onclick="handleEagleClick('eagle3', doSplit)">
-            
-            <div class="res-box">
-                <div id="sPay" style="font-weight:bold; font-size:1.1rem; line-height: 1.6;">ادفع بالجديد: 0 <br> ادفع بالقديم: 0</div>
-                <div id="sRest" style="color:#00ff84; font-size:0.85rem; margin-top:10px; border-top:1px solid #444; padding-top:5px;">المتبقي للمحل: 0</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="p1" class="page">
-        <div class="card">
-            <h2>المحول السريع</h2>
+            <h2>🔄 المحول السريع</h2>
             <input type="number" id="oldIn" class="input-main" placeholder="مبلغ قديم" oninput="activeConvert='old'; updateWords(this, 'w1')">
             <span id="w1" class="number-words"></span>
             <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" id="eagle1" onclick="handleEagleClick('eagle1', doQuick)">
@@ -159,9 +135,54 @@
         </div>
     </div>
 
+    <div id="p3" class="page">
+        <div class="card">
+            <h2>⚖️ تقسيم الفاتورة</h2>
+            <input type="number" id="splitTotal" class="input-main" placeholder="المبلغ بالقديم" oninput="updateWords(this, 'w4'); doSplit();">
+            <span id="w4" class="number-words"></span>
+            <div class="range-container">
+                <div class="range-label" style="color: #00ff84;"><span>سأدفع بالجديد:</span><span id="txtNew">0 %</span></div>
+                <input type="range" id="sldNew" min="0" max="100" value="0" step="5" oninput="syncSliders('NEW')">
+                <div class="range-label" style="color: #ff4d4d;"><span>سأدفع بالقديم:</span><span id="txtOld">0 %</span></div>
+                <input type="range" id="sldOld" min="0" max="100" value="0" step="5" oninput="syncSliders('OLD')">
+            </div>
+            <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" id="eagle3" onclick="handleEagleClick('eagle3', doSplit)">
+            <div class="res-box">
+                <div id="sPay" style="font-weight:bold; font-size:1.1rem; line-height: 1.6;">ادفع بالجديد: 0 <br> ادفع بالقديم: 0</div>
+                <div id="sRest" style="color:#00ff84; font-size:0.85rem; margin-top:10px; border-top:1px solid #444; padding-top:5px;">المتبقي للمحل: 0</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="p4" class="page">
+        <div class="card">
+            <h2>🔢 الحاسبة المختلطة</h2>
+            <input type="number" id="calcOld" class="input-main" placeholder="المبلغ بالقديم" oninput="doMixCalc()">
+            
+            <div class="op-selector">
+                <button class="op-btn active" onclick="setOp(this, '+')">+</button>
+                <button class="op-btn" onclick="setOp(this, '-')">-</button>
+                <button class="op-btn" onclick="setOp(this, '*')">×</button>
+                <button class="op-btn" onclick="setOp(this, '/')">÷</button>
+            </div>
+
+            <input type="number" id="calcNew" class="input-main" placeholder="المبلغ بالجديد" oninput="doMixCalc()">
+            
+            <div class="res-box">
+                <div style="font-size: 0.75rem; opacity: 0.7;">النتيجة بالقديم:</div>
+                <div id="mixResOld" style="color:#ff4d4d; font-weight:bold; font-size:1.1rem;">0 ل.س</div>
+                <div id="wOldWord" class="number-words" style="color:#ffbcbc; border-bottom: 1px solid #444; padding-bottom: 5px; margin-bottom: 5px;"></div>
+                
+                <div style="font-size: 0.75rem; opacity: 0.7;">النتيجة بالجديد (بدون صفرين):</div>
+                <div id="mixResNew" style="color:#00ff84; font-weight:bold; font-size:1.1rem;">0 ل.س</div>
+                <div id="wNewWord" class="number-words"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="p2" class="page">
         <div class="card">
-            <h2>صرف الدولار</h2>
+            <h2>💵 صرف الدولار</h2>
             <input type="number" id="uRate" class="input-main" value="15.5" style="margin-bottom:10px">
             <input type="number" id="uAmt" class="input-main" placeholder="المبلغ بالدولار $" oninput="updateWords(this, 'w3')">
             <span id="w3" class="number-words"></span>
@@ -172,7 +193,6 @@
 
     <div class="footer">
         <div>المطور: يحيى قاضي | <a href="https://www.instagram.com/yahya.sy998/" target="_blank">@yahya.sy998</a></div>
-        <div class="disclaimer">هذا التطبيق والموقع اجتهاد شخصي ولا يتصل بأي جهة رسمية إطلاقاً</div>
     </div>
 
     <script>
@@ -182,6 +202,7 @@
         videoOverlay.onclick = () => videoOverlay.style.display = 'none';
 
         let activeConvert = 'old';
+        let currentOp = '+';
 
         function toggleMenu() { document.getElementById('sideMenu').classList.toggle('active'); }
         function showPage(id) { 
@@ -195,29 +216,19 @@
             callback();
         }
 
-        function syncSliders(origin) {
-            let sN = document.getElementById('sldNew');
-            let sO = document.getElementById('sldOld');
-            let vN = parseInt(sN.value);
-            let vO = parseInt(sO.value);
-
-            if (vN + vO > 100) {
-                if (origin === 'NEW') sO.value = 100 - vN;
-                else sN.value = 100 - vO;
-            }
-
-            document.getElementById('txtNew').innerText = sN.value + " %";
-            document.getElementById('txtOld').innerText = sO.value + " %";
-            doSplit();
+        function setOp(btn, op) {
+            document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentOp = op;
+            doMixCalc();
         }
 
         function numberToArabicWords(n) {
-            n = Math.round(n);
-            if (n === 0) return "صفر ل.س";
+            n = Math.abs(Math.round(n));
+            if (n === 0) return "صفر";
             const units = ["", "واحد", "اثنان", "ثلاثة", "أربعة", "خمسة", "ستة", "سبعة", "ثمانية", "تسعة"];
             const tens = ["", "عشرة", "عشرون", "ثلاثون", "أربعون", "خمسون", "ستون", "سبعون", "ثمانون", "تسعون"];
             const hundreds = ["", "مئة", "مئتان", "ثلاثمئة", "أربعمئة", "خمسمئة", "ستمئة", "سبعمئة", "ثمانمئة", "تسعمئة"];
-
             function convert(num) {
                 if (num === 0) return "";
                 if (num < 10) return units[num];
@@ -225,9 +236,38 @@
                 if (num < 1000) return (num % 100 === 0) ? hundreds[num / 100] : hundreds[Math.floor(num / 100)] + " و" + convert(num % 100);
                 if (num < 1000000) return (Math.floor(num / 1000) === 1 ? "ألف" : Math.floor(num / 1000) === 2 ? "ألفين" : convert(Math.floor(num / 1000)) + " ألف") + (num % 1000 !== 0 ? " و" + convert(num % 1000) : "");
                 if (num < 1000000000) return (Math.floor(num / 1000000) === 1 ? "مليون" : Math.floor(num / 1000000) === 2 ? "مليونين" : convert(Math.floor(num / 1000000)) + " مليون") + (num % 1000000 !== 0 ? " و" + convert(num % 1000000) : "");
+                if (num < 1000000000000) return (Math.floor(num / 1000000000) === 1 ? "مليار" : Math.floor(num / 1000000000) === 2 ? "مليارين" : convert(Math.floor(num / 1000000000)) + " مليار") + (num % 1000000000 !== 0 ? " و" + convert(num % 1000000000) : "");
                 return num.toLocaleString();
             }
             return convert(n) + " ليرة سورية";
+        }
+
+        function doMixCalc() {
+            let oldV = parseFloat(document.getElementById('calcOld').value) || 0;
+            let newV = parseFloat(document.getElementById('calcNew').value) || 0;
+            let convertedNew = newV * 100;
+            let resO = 0;
+
+            if (currentOp === '+') resO = oldV + convertedNew;
+            else if (currentOp === '-') resO = oldV - convertedNew;
+            else if (currentOp === '*') resO = oldV * (newV || 0);
+            else if (currentOp === '/') resO = newV !== 0 ? oldV / newV : 0;
+
+            let resN = resO / 100;
+
+            document.getElementById('mixResOld').innerText = Math.round(resO).toLocaleString() + " ل.س";
+            document.getElementById('wOldWord').innerText = resO !== 0 ? numberToArabicWords(resO) : "";
+            document.getElementById('mixResNew').innerText = resN.toLocaleString() + " ل.س";
+            document.getElementById('wNewWord').innerText = resN !== 0 ? numberToArabicWords(resN) : "";
+        }
+
+        function syncSliders(origin) {
+            let sN = document.getElementById('sldNew'), sO = document.getElementById('sldOld');
+            let vN = parseInt(sN.value), vO = parseInt(sO.value);
+            if (vN + vO > 100) { if (origin === 'NEW') sO.value = 100 - vN; else sN.value = 100 - vO; }
+            document.getElementById('txtNew').innerText = sN.value + " %";
+            document.getElementById('txtOld').innerText = sO.value + " %";
+            doSplit();
         }
 
         function updateWords(input, targetId) {
@@ -237,40 +277,25 @@
 
         function doQuick() {
             let o = document.getElementById('oldIn'), n = document.getElementById('newIn');
-            if(activeConvert === 'old' && o.value) { 
-                n.value = Math.round(o.value / 100); 
-                updateWords(n, 'w2'); 
-            } else if(n.value) { 
-                o.value = Math.round(n.value * 100); 
-                updateWords(o, 'w1'); 
-            }
+            if(activeConvert === 'old' && o.value) { n.value = Math.round(o.value / 100); updateWords(n, 'w2'); }
+            else if(n.value) { o.value = Math.round(n.value * 100); updateWords(o, 'w1'); }
         }
 
         function doUsd() {
             let r = parseFloat(document.getElementById('uRate').value)||0, a = parseFloat(document.getElementById('uAmt').value)||0;
-            let res = Math.round(r * a);
-            document.getElementById('uRes').innerText = res.toLocaleString() + " ل.س جديد";
+            let res = Math.round(r * a); document.getElementById('uRes').innerText = res.toLocaleString() + " ل.س جديد";
         }
 
         function doSplit() {
             let totalOld = parseFloat(document.getElementById('splitTotal').value) || 0;
-            let pNew = parseInt(document.getElementById('sldNew').value);
-            let pOld = parseInt(document.getElementById('sldOld').value);
-
-            // حساب الجزء المراد دفعه بالجديد (منسوباً للمبلغ القديم الكلي) ثم حذق صفرين
-            // مثال: مليون * 100% = مليون .. تقسيم 100 = 10 آلاف جديد.
+            let pNew = parseInt(document.getElementById('sldNew').value), pOld = parseInt(document.getElementById('sldOld').value);
             let sharePartOfNewInOldTerms = totalOld * (pNew / 100);
             let payInNew = Math.round(sharePartOfNewInOldTerms / 100);
-
-            // حساب الجزء المراد دفعه بالقديم
             let payInOld = Math.round(totalOld * (pOld / 100));
-
-            // المتبقي (بالقديم)
             let remainingOld = Math.round(totalOld - sharePartOfNewInOldTerms - payInOld);
-
             document.getElementById('sPay').innerHTML = `ادفع بالجديد: <span style="color:#00ff84">${payInNew.toLocaleString()}</span><br>ادفع بالقديم: <span style="color:#ff4d4d">${payInOld.toLocaleString()}</span>`;
             document.getElementById('sRest').innerText = `المتبقي للمحل: ${remainingOld.toLocaleString()} (قديم)`;
         }
     </script>
-</body>
+</body> 
 </html>
