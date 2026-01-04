@@ -3,96 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق ليرة - يحيى عزام القاضي</title>
+    <title>نظام الليرة السورية الجديدة - يحيى عزام القاضي</title>
     <style>
         :root {
             --syria-green: #007A3D;
             --syria-red: #ED1C24;
-            --glass: rgba(15, 15, 15, 0.92);
+            --glass: rgba(15, 15, 15, 0.95);
+            --text-new: #00ff84; 
+            --text-old: #ff4d4d; 
         }
 
         body, html {
             margin: 0; padding: 0; min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             color: white; 
-            background: linear-gradient(270deg, #000000, #007A3D, #000000);
+            background: linear-gradient(270deg, #000, #007A3D, #000);
             background-size: 600% 600%;
             animation: seaWaves 12s ease infinite;
             overflow-x: hidden;
         }
 
-        @keyframes seaWaves {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        @keyframes seaWaves { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
         #introVideoOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: black; display: flex; flex-direction: column; 
             justify-content: center; align-items: center; z-index: 9999;
-            transition: opacity 0.5s ease;
         }
         .video-wrapper { width: 90%; max-width: 500px; border-radius: 20px; overflow: hidden; }
         #introVideoOverlay video { width: 100%; display: block; }
 
         .top-title {
-            position: fixed; top: 0; left: 0; width: 100%; padding: 12px 0;
-            text-align: center; font-size: 1rem; font-weight: bold;
-            color: white; z-index: 2000;
-            background: rgba(0,0,0,0.8);
+            position: fixed; top: 0; left: 0; width: 100%; padding: 8px 0;
+            text-align: center; font-size: 0.85rem;
+            color: #ccc; z-index: 2000; background: rgba(0,0,0,0.9);
             border-bottom: 1px solid var(--syria-green);
         }
 
-        .bottom-syria-text {
-            position: fixed; top: 110px; left: 0; width: 100%;
-            text-align: center; font-size: 1.7rem; font-weight: 900;
-            color: #00ff84; z-index: 1999; pointer-events: none;
-            text-shadow: 0 5px 15px rgba(0,0,0,0.8), 0 0 20px rgba(0, 255, 132, 0.3);
+        .syria-banner {
+            width: 100%; text-align: center; font-size: 1.2rem; font-weight: 700;
+            color: var(--text-new); margin-top: 80px; margin-bottom: 25px;
         }
 
         .menu-btn {
-            position: fixed; top: 160px; right: 15px; cursor: pointer; z-index: 2001; 
-            background: white; border: 2px solid var(--syria-green); color: var(--syria-red); 
-            border-radius: 12px; width: 40px; padding: 5px 0; text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            position: fixed; top: 130px; right: 15px; cursor: pointer; z-index: 2001; 
+            background: white; border: 1px solid var(--syria-green); color: #000; 
+            border-radius: 8px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
         }
 
         .side-menu {
-            position: fixed; top: 0; right: -280px; width: 260px; height: 100%;
-            background: var(--glass); z-index: 3000; transition: 0.4s ease; padding: 100px 20px;
-            border-left: 4px solid var(--syria-green);
+            position: fixed; top: 0; right: -300px; width: 260px; height: 100%;
+            background: linear-gradient(180deg, var(--syria-green) 0%, #fff 50%, #000 100%);
+            z-index: 3000; transition: 0.4s ease; padding: 60px 20px;
         }
         .side-menu.active { right: 0; }
 
-        .menu-item { padding: 15px; margin-bottom: 15px; border-radius: 12px; cursor: pointer; background: rgba(255,255,255,0.05); text-align: center; font-weight: bold; border-right: 4px solid var(--syria-green); }
+        .menu-item { padding: 12px; margin-bottom: 12px; border-radius: 10px; cursor: pointer; background: rgba(0,0,0,0.9); color: white; text-align: center; font-size: 0.85rem; transition: 0.3s; }
 
-        .page { 
-            display: none; flex-direction: column; align-items: center; justify-content: flex-start; 
-            min-height: 100vh; padding-top: 180px; padding-bottom: 120px; box-sizing: border-box; 
-        }
+        .page { display: none; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding-bottom: 220px; box-sizing: border-box; }
         .page.active { display: flex; }
 
-        .card { background: var(--glass); border-radius: 25px; padding: 25px; width: 88%; max-width: 400px; text-align: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.7); backdrop-filter: blur(10px); }
+        .card { background: var(--glass); border-radius: 20px; padding: 20px; width: 90%; max-width: 400px; text-align: center; border: 1px solid rgba(255,255,255,0.1); margin-top: 15px; }
+        h2 { font-size: 1rem; margin-bottom: 15px; }
 
-        .eagle-btn { width: 85px; height: 85px; border-radius: 50%; border: 3px solid var(--syria-green); margin: 15px auto; cursor: pointer; background: white; transition: 0.6s; }
-        .eagle-btn.rotate { transform: rotate(180deg); }
+        .eagle-btn { width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--syria-green); margin: 15px auto; cursor: pointer; background: white; transition: 0.6s; }
+        .rotate { transform: rotate(360deg); }
 
-        .input-main { background: white; color: #000; border: 2px solid var(--syria-green); width: 100%; padding: 12px; border-radius: 12px; font-size: 1.3rem; font-weight: bold; text-align: center; outline: none; box-sizing: border-box; }
+        .input-main { background: white; color: #000; border: 1px solid #ccc; width: 100%; padding: 10px; border-radius: 8px; font-size: 0.95rem; text-align: center; outline: none; }
+        .word-hint { font-size: 0.75rem; color: var(--text-new); margin: 5px 0 12px 0; display: block; }
 
-        .number-words { display: block; font-size: 0.8rem; color: #00ff84; margin: 8px 0; min-height: 1rem; font-weight: bold; }
+        .currency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .cur-col { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; border: 1px solid #333; display: flex; flex-direction: column; align-items: center; }
+        .flag-icon { width: 25px; height: 25px; margin-bottom: 5px; border-radius: 3px; }
+        .cur-tag { font-size: 0.7rem; margin-bottom: 5px; color: #ddd; }
+        .small-input { width: 100%; background: white; border: 1px solid #ddd; border-radius: 6px; padding: 6px; text-align: center; font-size: 0.8rem; color: #000; }
+        .market-hint { font-size: 0.75rem; color: #ffcc00; margin-bottom: 15px; display: block; font-weight: bold; }
 
-        .res-box { background: rgba(0,0,0,0.6); padding: 15px; border-radius: 15px; margin-top: 15px; border: 1px solid var(--syria-green); }
-
-        .range-container { margin: 20px 0; text-align: right; }
-        .range-label { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px; }
+        .res-box { background: rgba(0,0,0,0.8); padding: 12px; border-radius: 12px; margin-top: 15px; border: 1px solid var(--syria-green); font-size: 0.85rem; text-align: right; line-height: 1.6; }
         
-        input[type="range"] { width: 100%; height: 10px; border-radius: 5px; background: #333; outline: none; margin-bottom: 20px; cursor: pointer; accent-color: var(--syria-green); }
-        #sldOld { accent-color: var(--syria-red); }
+        .footer { 
+            text-align: center; padding: 12px 10px; background: #000; 
+            width: 100%; position: fixed; bottom: 0; left: 0; z-index: 1000; 
+            border-top: 1px solid var(--syria-green);
+        }
+        .dev-credit { font-size: 0.8rem; color: #fff; margin-bottom: 8px; display: block; }
+        .insta-btn { display: inline-flex; align-items: center; background: #1a1a1a; padding: 4px 12px; border-radius: 20px; color: #fff; text-decoration: none; font-size: 0.7rem; border: 1px solid #333; margin-bottom: 8px; }
+        .insta-btn img { width: 14px; margin-left: 6px; }
+        .disclaimer { font-size: 0.65rem; color: rgba(237, 28, 36, 0.6); font-weight: 300; display: block; }
 
-        .footer { text-align: center; padding: 12px; background: rgba(0,0,0,0.95); width: 100%; position: fixed; bottom: 0; left: 0; z-index: 1000; border-top: 2px solid var(--syria-green); }
-        .footer a { color: #00ff84; text-decoration: none; font-weight: bold; }
-        .disclaimer { font-size: 0.75rem; color: #ffbcbc; margin-top: 8px; line-height: 1.3; }
+        .op-btn { padding: 10px; border-radius: 8px; cursor: pointer; background: rgba(255,255,255,0.05); color: white; text-align: center; border: 1px solid #444; font-size: 1rem; }
+        .op-btn.active-op { background: var(--syria-green) !important; border-color: #fff !important; }
     </style>
 </head>
 <body>
@@ -105,83 +106,111 @@
         </div>
     </div>
 
-    <div class="top-title">تطبيق ليرة - يحيى قاضي</div>
-    <div class="bottom-syria-text">الجمهورية العربية السورية</div>
+    <div class="top-title">نظام الليرة السورية الجديدة</div>
+    <div class="syria-banner">الجمهورية العربية السورية</div>
 
-    <button class="menu-btn" onclick="toggleMenu()">
-        <span>★</span><span>★</span><span>★</span>
-    </button>
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
 
     <div id="sideMenu" class="side-menu">
         <div class="menu-item" onclick="showPage('p1')">🔄 المحول السريع</div>
-        <div class="menu-item" onclick="showPage('p2')">💵 صرف الدولار</div>
+        <div class="menu-item" onclick="showPage('p4')">🔢 حاسبة العملتين</div>
         <div class="menu-item" onclick="showPage('p3')">⚖️ تقسيم الفاتورة</div>
-        <div class="menu-item" onclick="toggleMenu()" style="background:var(--syria-red); margin-top:40px;">إغلاق</div>
+        <div class="menu-item" onclick="showPage('p2')">💵 صرف العملات</div>
+        <div class="menu-item" onclick="toggleMenu()" style="background:var(--syria-red); margin-top:30px;">إغلاق</div>
     </div>
 
-    <div id="p3" class="page active">
+    <div id="p1" class="page active">
         <div class="card">
-            <h2>⚖️ تقسيم الفاتورة</h2>
-            <input type="number" id="splitTotal" class="input-main" placeholder="المبلغ بالقديم" oninput="updateWords(this, 'w4'); doSplit();">
-            <span id="w4" class="number-words"></span>
-            
-            <div class="range-container">
-                <div class="range-label" style="color: #00ff84;">
-                    <span>سأدفع بالجديد:</span>
-                    <span id="txtNew">0 %</span>
-                </div>
-                <input type="range" id="sldNew" min="0" max="100" value="0" step="5" oninput="syncSliders('NEW')">
+            <h2>🔄 المحول السريع</h2>
+            <input type="number" id="oldIn" class="input-main" placeholder="المبلغ بالقديم" oninput="activeConv='old'; updateWords(this)">
+            <span id="oldInWords" class="word-hint"></span>
+            <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" onclick="handleEagleClick(this, doQuick)">
+            <input type="number" id="newIn" class="input-main" placeholder="المبلغ بالجديد" oninput="activeConv='new'; updateWords(this)">
+            <span id="newInWords" class="word-hint"></span>
+        </div>
+    </div>
 
-                <div class="range-label" style="color: #ff4d4d;">
-                    <span>سأدفع بالقديم:</span>
-                    <span id="txtOld">0 %</span>
-                </div>
-                <input type="range" id="sldOld" min="0" max="100" value="0" step="5" oninput="syncSliders('OLD')">
+    <div id="p4" class="page">
+        <div class="card">
+            <h2>🔢 حاسبة العملتين</h2>
+            <input type="number" id="calcOld" class="input-main" placeholder="مبلغ بالقديم" oninput="updateWords(this)">
+            <span id="calcOldWords" class="word-hint"></span>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0;">
+                <div id="opPlus" class="op-btn active-op" onclick="setOp('+', this)">➕</div>
+                <div id="opMinus" class="op-btn" onclick="setOp('-', this)">➖</div>
+                <div id="opMult" class="op-btn" onclick="setOp('*', this)">✖</div>
+                <div id="opDiv" class="op-btn" onclick="setOp('/', this)">➗</div>
             </div>
-
-            <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" id="eagle3" onclick="handleEagleClick('eagle3', doSplit)">
-            
+            <input type="number" id="calcNew" class="input-main" placeholder="مبلغ بالجديد" oninput="updateWords(this)">
+            <span id="calcNewWords" class="word-hint"></span>
+            <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" onclick="handleEagleClick(this, runMixCalc)">
             <div class="res-box">
-                <div id="sPay" style="font-weight:bold; font-size:1.1rem; line-height: 1.6;">ادفع بالجديد: 0 <br> ادفع بالقديم: 0</div>
-                <div id="sRest" style="color:#00ff84; font-size:0.85rem; margin-top:10px; border-top:1px solid #444; padding-top:5px;">المتبقي للمحل: 0</div>
+                <div id="mixResOld">القديم: 0 ل.س</div>
+                <div id="mixResNew" style="color:var(--text-new); margin-top:5px; border-top: 1px solid #333; padding-top:5px;">الجديد: 0 ل.س</div>
             </div>
         </div>
     </div>
 
-    <div id="p1" class="page">
+    <div id="p3" class="page">
         <div class="card">
-            <h2>المحول السريع</h2>
-            <input type="number" id="oldIn" class="input-main" placeholder="مبلغ قديم" oninput="activeConvert='old'; updateWords(this, 'w1')">
-            <span id="w1" class="number-words"></span>
-            <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" id="eagle1" onclick="handleEagleClick('eagle1', doQuick)">
-            <input type="number" id="newIn" class="input-main" placeholder="مبلغ جديد" oninput="activeConvert='new'; updateWords(this, 'w2')">
-            <span id="w2" class="number-words"></span>
+            <h2>⚖️ تقسيم الفاتورة</h2>
+            <input type="number" id="splitOld" class="input-main" placeholder="إجمالي بالقديم" oninput="syncInputs('old'); updateWords(this)">
+            <span id="splitOldWords" class="word-hint"></span>
+            <input type="number" id="splitNew" class="input-main" placeholder="أو إجمالي بالجديد" oninput="syncInputs('new'); updateWords(this)">
+            <span id="splitNewWords" class="word-hint"></span>
+            <div style="display:flex; justify-content:space-between; margin:10px 0; font-size:0.8rem; font-weight:bold;">
+                <span style="color:var(--text-new)">جديد: <span id="txtNew">0%</span></span>
+                <span style="color:var(--text-old)">قديم: <span id="txtOld">100%</span></span>
+            </div>
+            <input type="range" id="sldNew" min="0" max="100" value="0" style="width:100%; cursor:pointer;" oninput="syncSliders()">
+            <div id="sPay" class="res-box"><div id="payNewRes">ادفع جديد: 0</div><div id="payOldRes">ادفع قديم: 0</div></div>
         </div>
     </div>
 
     <div id="p2" class="page">
         <div class="card">
-            <h2>صرف الدولار</h2>
-            <input type="number" id="uRate" class="input-main" value="15.5" style="margin-bottom:10px">
-            <input type="number" id="uAmt" class="input-main" placeholder="المبلغ بالدولار $" oninput="updateWords(this, 'w3')">
-            <span id="w3" class="number-words"></span>
-            <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" id="eagle2" onclick="handleEagleClick('eagle2', doUsd)">
-            <div id="uRes" class="res-box" style="color:#00ff84">0 ل.س جديد</div>
+            <h2>💵 صرف العملات</h2>
+            <span class="market-hint">يرجى إضافة سعر الصرف يدوياً حسب السوق</span>
+            <div class="currency-grid">
+                <div class="cur-col"><img src="https://flagcdn.com/w80/us.png" class="flag-icon"><span class="cur-tag">دولار US</span><input type="number" id="rateUsd" class="small-input" placeholder="سعر"></div>
+                <div class="cur-col"><img src="https://flagcdn.com/w80/sa.png" class="flag-icon"><span class="cur-tag">ريال SA</span><input type="number" id="rateSar" class="small-input" placeholder="سعر"></div>
+                <div class="cur-col"><img src="https://flagcdn.com/w80/eu.png" class="flag-icon"><span class="cur-tag">يورو EU</span><input type="number" id="rateEur" class="small-input" placeholder="سعر"></div>
+                <div class="cur-col"><img src="https://flagcdn.com/w80/tr.png" class="flag-icon"><span class="cur-tag">تركي TR</span><input type="number" id="rateTry" class="small-input" placeholder="سعر"></div>
+            </div>
+            <input type="number" id="amtGlobal" class="input-main" placeholder="المبلغ المراد تحويله" oninput="updateWords(this)">
+            <span id="amtGlobalWords" class="word-hint"></span>
+            <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" onclick="handleEagleClick(this, doAllCurrencies)">
+            <div id="curRes" class="res-box" style="display:none;"></div>
         </div>
     </div>
 
     <div class="footer">
-        <div>المطور: يحيى قاضي | <a href="https://www.instagram.com/yahya.sy998/" target="_blank">@yahya.sy998</a></div>
-        <div class="disclaimer">هذا التطبيق والموقع اجتهاد شخصي ولا يتصل بأي جهة رسمية إطلاقاً</div>
+        <span class="dev-credit">مطور البرنامج والموقع: <b>يحيى عزام القاضي</b></span>
+        <a href="https://www.instagram.com/yahya.sy998/" target="_blank" class="insta-btn">
+            <span>@yahya.sy998</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg">
+        </a>
+        <span class="disclaimer">التطبيق والموقع اجتهاد شخصي ولا يمثل أي جهة رسمية إطلاقاً</span>
     </div>
 
     <script>
+        function formatArabicWords(num) {
+            if (!num || num === 0) return "";
+            if (num >= 1000000000) return (num / 1000000000).toLocaleString('ar-EG', {maximumFractionDigits: 1}) + " مليار";
+            if (num >= 1000000) return (num / 1000000).toLocaleString('ar-EG', {maximumFractionDigits: 1}) + " مليون";
+            if (num >= 1000) return (num / 1000).toLocaleString('ar-EG', {maximumFractionDigits: 1}) + " ألف";
+            return Math.round(num).toLocaleString('ar-EG');
+        }
+
+        function updateWords(inputEl) {
+            const wordEl = document.getElementById(inputEl.id + "Words");
+            if (wordEl) wordEl.innerText = formatArabicWords(parseFloat(inputEl.value) || 0);
+        }
+
         const videoOverlay = document.getElementById('introVideoOverlay');
         const introVideo = document.getElementById('introVideo');
         introVideo.onended = () => videoOverlay.style.display = 'none';
         videoOverlay.onclick = () => videoOverlay.style.display = 'none';
-
-        let activeConvert = 'old';
 
         function toggleMenu() { document.getElementById('sideMenu').classList.toggle('active'); }
         function showPage(id) { 
@@ -190,86 +219,69 @@
             toggleMenu();
         }
 
-        function handleEagleClick(id, callback) {
-            document.getElementById(id).classList.toggle('rotate');
+        function handleEagleClick(el, callback) {
+            el.classList.add('rotate');
+            setTimeout(() => el.classList.remove('rotate'), 600);
             callback();
         }
 
-        function syncSliders(origin) {
-            let sN = document.getElementById('sldNew');
-            let sO = document.getElementById('sldOld');
-            let vN = parseInt(sN.value);
-            let vO = parseInt(sO.value);
-
-            if (vN + vO > 100) {
-                if (origin === 'NEW') sO.value = 100 - vN;
-                else sN.value = 100 - vO;
-            }
-
-            document.getElementById('txtNew').innerText = sN.value + " %";
-            document.getElementById('txtOld').innerText = sO.value + " %";
-            doSplit();
-        }
-
-        function numberToArabicWords(n) {
-            n = Math.round(n);
-            if (n === 0) return "صفر ل.س";
-            const units = ["", "واحد", "اثنان", "ثلاثة", "أربعة", "خمسة", "ستة", "سبعة", "ثمانية", "تسعة"];
-            const tens = ["", "عشرة", "عشرون", "ثلاثون", "أربعون", "خمسون", "ستون", "سبعون", "ثمانون", "تسعون"];
-            const hundreds = ["", "مئة", "مئتان", "ثلاثمئة", "أربعمئة", "خمسمئة", "ستمئة", "سبعمئة", "ثمانمئة", "تسعمئة"];
-
-            function convert(num) {
-                if (num === 0) return "";
-                if (num < 10) return units[num];
-                if (num < 100) return (num % 10 === 0) ? tens[num / 10] : units[num % 10] + " و" + tens[Math.floor(num / 10)];
-                if (num < 1000) return (num % 100 === 0) ? hundreds[num / 100] : hundreds[Math.floor(num / 100)] + " و" + convert(num % 100);
-                if (num < 1000000) return (Math.floor(num / 1000) === 1 ? "ألف" : Math.floor(num / 1000) === 2 ? "ألفين" : convert(Math.floor(num / 1000)) + " ألف") + (num % 1000 !== 0 ? " و" + convert(num % 1000) : "");
-                if (num < 1000000000) return (Math.floor(num / 1000000) === 1 ? "مليون" : Math.floor(num / 1000000) === 2 ? "مليونين" : convert(Math.floor(num / 1000000)) + " مليون") + (num % 1000000 !== 0 ? " و" + convert(num % 1000000) : "");
-                return num.toLocaleString();
-            }
-            return convert(n) + " ليرة سورية";
-        }
-
-        function updateWords(input, targetId) {
-            let val = parseInt(input.value) || 0;
-            document.getElementById(targetId).innerText = val > 0 ? numberToArabicWords(val) : "";
-        }
-
+        let activeConv = 'old';
         function doQuick() {
             let o = document.getElementById('oldIn'), n = document.getElementById('newIn');
-            if(activeConvert === 'old' && o.value) { 
-                n.value = Math.round(o.value / 100); 
-                updateWords(n, 'w2'); 
-            } else if(n.value) { 
-                o.value = Math.round(n.value * 100); 
-                updateWords(o, 'w1'); 
-            }
+            if(activeConv === 'old') n.value = (o.value / 100); else o.value = (n.value * 100);
+            updateWords(o); updateWords(n);
         }
 
-        function doUsd() {
-            let r = parseFloat(document.getElementById('uRate').value)||0, a = parseFloat(document.getElementById('uAmt').value)||0;
-            let res = Math.round(r * a);
-            document.getElementById('uRes').innerText = res.toLocaleString() + " ل.س جديد";
+        window.currentOp = '+';
+        function setOp(op, btn) { 
+            window.currentOp = op; 
+            document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('active-op'));
+            btn.classList.add('active-op');
         }
 
-        function doSplit() {
-            let totalOld = parseFloat(document.getElementById('splitTotal').value) || 0;
-            let pNew = parseInt(document.getElementById('sldNew').value);
-            let pOld = parseInt(document.getElementById('sldOld').value);
+        function runMixCalc() {
+            let vO = parseFloat(document.getElementById('calcOld').value) || 0;
+            let vN = parseFloat(document.getElementById('calcNew').value) || 0;
+            let resOld = window.currentOp === '+' ? vO + (vN*100) : window.currentOp === '-' ? vO - (vN*100) : window.currentOp === '*' ? vO * vN : (vN!==0 ? vO/vN : 0);
+            document.getElementById('mixResOld').innerText = "القديم: " + Math.round(resOld).toLocaleString() + " ل.س";
+            document.getElementById('mixResNew').innerText = "الجديد: " + (resOld/100).toLocaleString() + " ل.س";
+        }
 
-            // حساب الجزء المراد دفعه بالجديد (منسوباً للمبلغ القديم الكلي) ثم حذق صفرين
-            // مثال: مليون * 100% = مليون .. تقسيم 100 = 10 آلاف جديد.
-            let sharePartOfNewInOldTerms = totalOld * (pNew / 100);
-            let payInNew = Math.round(sharePartOfNewInOldTerms / 100);
+        function syncInputs(source) {
+            let o = document.getElementById('splitOld'), n = document.getElementById('splitNew');
+            if(source === 'old') n.value = (parseFloat(o.value) || 0) / 100; else o.value = (parseFloat(n.value) || 0) * 100;
+            updateWords(o); updateWords(n); syncSliders();
+        }
 
-            // حساب الجزء المراد دفعه بالقديم
-            let payInOld = Math.round(totalOld * (pOld / 100));
+        function syncSliders() {
+            let sN = document.getElementById('sldNew'), totalOld = parseFloat(document.getElementById('splitOld').value) || 0;
+            let percentNew = sN.value;
+            let percentOld = 100 - percentNew;
+            document.getElementById('txtNew').innerText = percentNew + "%";
+            document.getElementById('txtOld').innerText = percentOld + "%";
+            let pNew = (totalOld / 100) * (percentNew / 100);
+            let pOld = totalOld * (percentOld / 100);
+            document.getElementById('payNewRes').innerText = "ادفع جديد: " + pNew.toLocaleString();
+            document.getElementById('payOldRes').innerText = "ادفع قديم: " + Math.round(pOld).toLocaleString();
+        }
 
-            // المتبقي (بالقديم)
-            let remainingOld = Math.round(totalOld - sharePartOfNewInOldTerms - payInOld);
-
-            document.getElementById('sPay').innerHTML = `ادفع بالجديد: <span style="color:#00ff84">${payInNew.toLocaleString()}</span><br>ادفع بالقديم: <span style="color:#ff4d4d">${payInOld.toLocaleString()}</span>`;
-            document.getElementById('sRest').innerText = `المتبقي للمحل: ${remainingOld.toLocaleString()} (قديم)`;
+        function doAllCurrencies() {
+            let amt = parseFloat(document.getElementById('amtGlobal').value) || 0;
+            let currencies = [
+                { f: '🇺🇸', n: 'دولار', r: parseFloat(document.getElementById('rateUsd').value) || 0 },
+                { f: '🇸🇦', n: 'ريال', r: parseFloat(document.getElementById('rateSar').value) || 0 },
+                { f: '🇪🇺', n: 'يورو', r: parseFloat(document.getElementById('rateEur').value) || 0 },
+                { f: '🇹🇷', n: 'تركي', r: parseFloat(document.getElementById('rateTry').value) || 0 }
+            ];
+            let resBox = document.getElementById('curRes'); resBox.style.display = 'block';
+            resBox.innerHTML = currencies.map(c => {
+                let tO = Math.round(amt * c.r); let tN = tO / 100;
+                return `<div style="margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;">
+                    <b style="color:#fff">${c.f} ${c.n}:</b><br>
+                    <span style="color:var(--text-old)">• قديم: ${tO.toLocaleString()} ل.س</span><br>
+                    <span style="color:var(--text-new)">• جديد: ${tN.toLocaleString()} ل.س</span>
+                </div>`;
+            }).join('');
         }
     </script>
 </body>
