@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J6XJV9V7B1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-J6XJV9V7B1');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام الليرة السورية الجديدة - يحيى عزام القاضي</title>
@@ -88,7 +97,6 @@
             text-decoration: none;
         }
 
-        /* سهم الأيفون */
         #iosPointer {
             display: none; position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%);
             z-index: 6000; text-align: center; animation: bounceArrow 1.5s infinite;
@@ -248,7 +256,6 @@
     </div>
 
     <script>
-        // تفقيط الأرقام (الكود الأصلي الخاص بك)
         function nToW(n) {
             if (n === 0) return "صفر ليرة";
             const units = ["", "واحد", "اثنان", "ثلاثة", "أربعة", "خمسة", "ستة", "سبعة", "ثمانية", "تسعة"];
@@ -339,12 +346,11 @@
             document.getElementById('buy-' + cur).classList.add('selected-buy');
         }
 
-        // منطق الأيفون والسهم
         function showIosInstructions() {
             document.getElementById('iosModal').style.display = 'flex';
             const pointer = document.getElementById('iosPointer');
             pointer.style.display = 'block';
-            setTimeout(() => { pointer.style.display = 'none'; }, 10000); // يختفي بعد 10 ثواني
+            setTimeout(() => { pointer.style.display = 'none'; }, 10000); 
         }
         function closeIosModal() {
             document.getElementById('iosModal').style.display = 'none';
