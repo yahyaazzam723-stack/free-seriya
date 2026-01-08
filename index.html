@@ -6,7 +6,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-J6XJV9V7B1');
     </script>
 
@@ -69,49 +68,88 @@
         .side-menu.active { right: 0; }
         .menu-item { padding: 12px; margin-bottom: 10px; border-radius: 10px; cursor: pointer; background: rgba(0,0,0,0.9); color: white; text-align: center; font-size: 0.85rem; }
 
-        .page { display: none; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding-bottom: 250px; box-sizing: border-box; }
+        .page { display: none; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding-bottom: 300px; box-sizing: border-box; }
         .page.active { display: flex; }
 
         .card { background: var(--glass); border-radius: 20px; padding: 15px; width: 92%; max-width: 380px; text-align: center; border: 1px solid rgba(255,255,255,0.1); margin-top: 10px; }
         
-        .eagle-container { width: 100%; display: flex; justify-content: center; margin: 10px 0; height: 75px; position: relative; }
+        .eagle-container { width: 100%; display: flex; flex-direction: column; align-items: center; margin: 10px 0; }
         .eagle-btn { width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--syria-green); cursor: pointer; background: white; transition: 0.6s; z-index: 10; }
         .rotate { transform: rotate(360deg); }
+        .eagle-hint { font-size: 0.7rem; color: #00ff84; margin-top: 5px; font-weight: bold; }
+
+        .cloud-container {
+            position: relative; width: 100%; margin: 20px 0; cursor: pointer;
+            animation: floatCloud 3s ease-in-out infinite;
+        }
+        @keyframes floatCloud { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        
+        .cloud-bubble {
+            background: #ffecb3; color: #333; padding: 12px; border-radius: 30px;
+            font-size: 0.8rem; font-weight: bold; box-shadow: 0 4px 15px rgba(255, 236, 179, 0.3);
+            border: 2px solid #ffcc00; position: relative; display: inline-block;
+        }
 
         .input-main { background: white; color: #000; border: 1px solid #ccc; width: 100%; padding: 12px; border-radius: 8px; font-size: 1.2rem; font-weight: bold; text-align: center; outline: none; box-sizing: border-box;}
         .word-hint { font-size: 0.75rem; color: #ffcc00; margin: 4px 0 8px 0; display: block; min-height: 1.1em; }
 
-        .res-box { background: rgba(0,0,0,0.8); padding: 12px; border-radius: 12px; margin-top: 10px; border: 1px solid var(--syria-green); font-size: 1.1rem; font-weight: bold; text-align: right; }
-        .res-words { font-size: 0.75rem; color: #ffcc00; display: block; font-weight: normal; margin-bottom: 5px; border-bottom: 1px solid #333; padding-bottom: 3px; }
+        .sync-card { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); width: 100%; box-sizing: border-box; }
+        
+        .full-refresh-btn { 
+            background: var(--syria-green); color: white; border: none; padding: 12px; 
+            border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; 
+            font-size: 0.95rem; transition: 0.1s; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .full-refresh-btn:active { transform: scale(0.98); background: #005a2d; }
+
+        .auto-sync-box { margin-top: 10px; padding: 8px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px dashed var(--syria-green); }
+        .countdown-text { font-size: 0.8rem; color: #fff; display: block; font-weight: bold;}
+        #countdown { color: var(--text-new); }
 
         .footer { 
             text-align: center; padding: 15px 5px; background: #000; width: 100%; 
             position: fixed; bottom: 0; left: 0; z-index: 1000; border-top: 2px solid var(--syria-green);
         }
-        .btn-group { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+
+        .download-links { display: flex; justify: center; gap: 8px; margin-bottom: 12px; justify-content: center; }
+        .dl-btn { 
+            background: rgba(0, 255, 132, 0.1); border: 1px solid var(--text-new); 
+            color: var(--text-new); padding: 6px 14px; border-radius: 20px; 
+            text-decoration: none; font-size: 0.75rem; font-weight: bold;
+        }
         
-        .install-btn { 
-            background: white; color: black; padding: 8px 12px; border-radius: 12px; 
-            font-weight: bold; font-size: 0.75rem; border: 1px solid var(--syria-green); 
-            cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
-            text-decoration: none;
+        .insta-btn { 
+            display: inline-flex; align-items: center; gap: 5px; background: #111; padding: 5px 12px; 
+            border-radius: 20px; border: 1px solid #444; color: white; text-decoration: none; font-size: 0.8rem; margin-bottom: 8px;
         }
+        .insta-btn img { width: 16px; height: 16px; }
+        .dev-name { display: block; font-size: 0.7rem; color: #888; margin-top: 4px; }
+        .disclaimer-red { display: block; font-size: 0.6rem; color: var(--syria-red); margin-top: 2px; }
 
-        #iosPointer {
-            display: none; position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%);
-            z-index: 6000; text-align: center; animation: bounceArrow 1.5s infinite;
+        #iosGuide { 
+            display: none; position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+            background: #fff; color: #000; padding: 15px; border-radius: 15px; width: 80%; max-width: 300px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 5000; text-align: center;
         }
-        @keyframes bounceArrow { 0%, 100% { bottom: 85px; } 50% { bottom: 105px; } }
-        .arrow-text { background: var(--syria-green); color: white; padding: 6px 15px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .arrow-icon { font-size: 25px; color: var(--syria-green); display: block; line-height: 1; }
+        .ios-arrow { font-size: 2rem; color: var(--syria-green); display: block; margin-top: 10px; animation: bounce 1s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
 
-        .insta-btn { display: inline-flex; align-items: center; background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); padding: 5px 12px; border-radius: 15px; color: #fff; text-decoration: none; font-size: 0.8rem; font-weight: bold; }
-        .insta-btn img { width: 16px; margin-left: 6px; filter: brightness(0) invert(1); }
-        .dev-name { font-size: 0.8rem; display: block; margin: 5px 0; color: #bbb; }
-        .disclaimer-red { color: var(--syria-red); font-size: 0.75rem; font-weight: bold; display: block; margin-top: 4px; }
-
-        #iosModal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:5000; justify-content:center; align-items:center; }
-        .modal-content { background: white; color: black; width: 85%; max-width: 320px; padding: 20px; border-radius: 20px; text-align: center; }
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .res-item-box {
+            background: rgba(0,0,0,0.8);
+            border: 1px solid var(--syria-green);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+        }
+        .res-item-box b { font-size: 0.9rem; border-bottom: 1px solid #333; display: block; margin-bottom: 5px; padding-bottom: 3px; }
+        .res-val-old { color: var(--text-old); font-size: 0.95rem; font-weight: bold; display: block; }
+        .res-val-new { color: var(--text-new); font-size: 0.95rem; font-weight: bold; display: block; margin-top: 3px; }
 
         .currency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; width: 100%; }
         .cur-col { background: rgba(255,255,255,0.03); padding: 8px; border-radius: 10px; border: 1px solid #333; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
@@ -121,12 +159,31 @@
         .op-btn { padding: 8px; border-radius: 6px; cursor: pointer; background: rgba(255,255,255,0.05); color: white; text-align: center; border: 1px solid #444; font-size: 1.1rem; }
         .op-btn.active-op { background: var(--syria-green) !important; border-color: #fff !important; }
         input[type=range] { width: 100%; margin: 10px 0; cursor: pointer; accent-color: var(--syria-green); }
+        #siteModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 8000; flex-direction: column; }
+        .modal-header { background: #111; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--syria-green); }
+        #siteModal iframe { width: 100%; flex-grow: 1; border: none; background: white; }
+        .res-box { background: rgba(0,0,0,0.8); padding: 12px; border-radius: 12px; margin-top: 10px; border: 1px solid var(--syria-green); font-size: 1.1rem; font-weight: bold; text-align: right; }
+        .res-words { font-size: 0.75rem; color: #ffcc00; display: block; font-weight: normal; margin-bottom: 5px; border-bottom: 1px solid #333; padding-bottom: 3px; }
     </style>
 </head>
 <body>
 
     <div id="introVideoOverlay"><div class="video-wrapper"><video id="introVideo" autoplay muted playsinline><source src="https://res.cloudinary.com/dmyfkuoxw/video/upload/v1735862550/WhatsApp_Video_2026-01-03_at_3.02.28_AM_v4vctg.mp4" type="video/mp4"></video></div></div>
     
+    <div id="iosGuide" onclick="this.style.display='none'">
+        <p style="font-size:0.9rem; margin:0; font-weight:bold;">لإضافة التطبيق للشاشة الرئيسية:</p>
+        <p style="font-size:0.8rem; margin:5px 0;">اضغط على زر المشاركة في متصفح سفاري ثم اختر "إضافة إلى الشاشة الرئيسية".</p>
+        <span class="ios-arrow">↓</span>
+    </div>
+
+    <div id="siteModal">
+        <div class="modal-header">
+            <span style="color:white; font-size:0.9rem;">التحقق اليدوي - الليرة اليوم</span>
+            <button onclick="closeSiteModal()" style="background:var(--syria-red); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">إغلاق X</button>
+        </div>
+        <iframe src="https://sp-today.com/"></iframe>
+    </div>
+
     <div class="top-title">نظام الليرة السورية الجديدة</div>
     <div class="syria-banner">الجمهورية العربية السورية</div>
     <div class="menu-btn" onclick="toggleMenu()">☰</div>
@@ -143,10 +200,13 @@
     <div id="p1" class="page active">
         <div class="card">
             <h2>🔄 المحول السريع</h2>
-            <input type="number" id="oldIn" class="input-main" placeholder="المبلغ بالقديم" oninput="activeConv='old'; updateWords(this)">
+            <input type="number" id="oldIn" class="input-main" placeholder="المبلغ بالقديم" oninput="window.activeConv='old'; updateWords(this)">
             <span id="oldInWords" class="word-hint"></span>
-            <div class="eagle-container"><img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" onclick="handleEagleClick(this, doQuick)"></div>
-            <input type="number" id="newIn" class="input-main" placeholder="المبلغ بالجديد" oninput="activeConv='new'; updateWords(this)">
+            <div class="eagle-container">
+                <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" onclick="handleEagleClick(this, doQuick)">
+                <span class="eagle-hint">اضغط على النسر للتحويل</span>
+            </div>
+            <input type="number" id="newIn" class="input-main" placeholder="المبلغ بالجديد" oninput="window.activeConv='new'; updateWords(this)">
             <span id="newInWords" class="word-hint"></span>
         </div>
     </div>
@@ -163,7 +223,10 @@
             <input type="number" id="buyPrice" class="input-main" placeholder="سعر الغرض بالعملة" oninput="updateWords(this)">
             <span id="buyPriceWords" class="word-hint"></span>
             <input type="number" id="buyExchangeRate" class="input-main" placeholder="سعر الصرف حالياً">
-            <div class="eagle-container"><img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" onclick="handleEagleClick(this, calculatePurchase)"></div>
+            <div class="eagle-container">
+                <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" onclick="handleEagleClick(this, calculatePurchase)">
+                <span class="eagle-hint">اضغط على النسر للتحويل</span>
+            </div>
             <div class="res-box">
                 <div id="buyResOld" style="color:var(--text-old)">بالقديم: 0</div><small id="buyResOldWords" class="res-words"></small>
                 <div id="buyResNew" style="color:var(--text-new)">بالجديد: 0</div><small id="buyResNewWords" class="res-words"></small>
@@ -184,7 +247,10 @@
             </div>
             <input type="number" id="calcNew" class="input-main" placeholder="بالجديد" oninput="updateWords(this)">
             <span id="calcNewWords" class="word-hint"></span>
-            <div class="eagle-container"><img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" onclick="handleEagleClick(this, runMixCalc)"></div>
+            <div class="eagle-container">
+                <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" onclick="handleEagleClick(this, runMixCalc)">
+                <span class="eagle-hint">اضغط على النسر للتحويل</span>
+            </div>
             <div class="res-box">
                 <div id="mixResOld">القديم: 0</div><small id="mixResOldWords" class="res-words"></small>
                 <div id="mixResNew" style="color:var(--text-new)">الجديد: 0</div><small id="mixResNewWords" class="res-words"></small>
@@ -212,45 +278,47 @@
     <div id="p2" class="page">
         <div class="card">
             <h2>💵 صرف العملات</h2>
-            <div class="currency-grid">
-                <div class="cur-col"><img src="https://flagcdn.com/w80/us.png" class="flag-icon"><span>دولار</span><input type="number" id="rateUsd" class="small-input" placeholder="سعر"></div>
-                <div class="cur-col"><img src="https://flagcdn.com/w80/tr.png" class="flag-icon"><span>تركي</span><input type="number" id="rateTry" class="small-input" placeholder="سعر"></div>
-                <div class="cur-col"><img src="https://flagcdn.com/w80/eu.png" class="flag-icon"><span>يورو</span><input type="number" id="rateEur" class="small-input" placeholder="سعر"></div>
-                <div class="cur-col"><img src="https://flagcdn.com/w80/sa.png" class="flag-icon"><span>سعودي</span><input type="number" id="rateSar" class="small-input" placeholder="سعر"></div>
+            <div class="sync-card">
+                <button class="full-refresh-btn" id="refreshBtn" onclick="fetchSheetData()">🔄 تحديث الأسعار يدوياً</button>
+                
+                <div class="auto-sync-box">
+                    <span class="countdown-text">تحديث تلقائي خلال: <b id="countdown">7</b> ث</span>
+                    <span id="syncStatus" style="font-size:0.7rem; color:#aaa; display:block; margin-top:2px;">جاري الاتصال المباشر...</span>
+                </div>
             </div>
+            
+            <div class="currency-grid">
+                <div class="cur-col"><img src="https://flagcdn.com/w80/us.png" class="flag-icon"><span>دولار</span><input type="number" id="rateUsd" class="small-input"></div>
+                <div class="cur-col"><img src="https://flagcdn.com/w80/tr.png" class="flag-icon"><span>تركي</span><input type="number" id="rateTry" class="small-input"></div>
+                <div class="cur-col"><img src="https://flagcdn.com/w80/eu.png" class="flag-icon"><span>يورو</span><input type="number" id="rateEur" class="small-input"></div>
+                <div class="cur-col"><img src="https://flagcdn.com/w80/sa.png" class="flag-icon"><span>سعودي</span><input type="number" id="rateSar" class="small-input"></div>
+            </div>
+
+            <div class="cloud-container" onclick="openSiteModal()">
+                <div class="cloud-bubble">يرجى التحقق من السعر يدوياً "اضغط هنا"</div>
+            </div>
+
             <input type="number" id="amtGlobal" class="input-main" placeholder="المبلغ للتحويل" oninput="updateWords(this)">
             <span id="amtGlobalWords" class="word-hint"></span>
-            <div class="eagle-container"><img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" onclick="handleEagleClick(this, doAllCurrencies)"></div>
-            <div id="curRes" class="res-box" style="display:none;"></div>
-        </div>
-    </div>
-
-    <div id="iosPointer">
-        <span class="arrow-text">اضغط هنا ثم "إضافة للشاشة الرئيسية"</span>
-        <span class="arrow-icon">▼</span>
-    </div>
-
-    <div id="iosModal">
-        <div class="modal-content">
-            <h3>تثبيت على الأيفون</h3>
-            <p style="font-size:0.9rem;">لإضافة الموقع كـ تطبيق:</p>
-            <ol style="font-size:0.85rem; text-align:right;">
-                <li>اتبع السهم المتحرك بالأسفل واضغط زر المشاركة.</li>
-                <li>اختر <b>"إضافة إلى الصفحة الرئيسية"</b>.</li>
-            </ol>
-            <p style="font-size:0.85rem; color:var(--syria-green); font-weight:bold; margin-top:10px; border:1px solid #ddd; padding:5px; border-radius:8px;">
-                💡 لا تقلق، سوف يعمل البرنامج بدون إنترنت!
-            </p>
-            <button onclick="closeIosModal()" style="background:var(--syria-green); color:white; border:none; padding:8px 15px; border-radius:10px; cursor:pointer; margin-top:10px;">فهمت ذلك</button>
+            <div class="eagle-container">
+                <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" onclick="handleEagleClick(this, doAllCurrencies)">
+                <span class="eagle-hint">اضغط على النسر للتحويل</span>
+            </div>
+            
+            <div id="curRes" class="results-grid" style="display:none;"></div>
         </div>
     </div>
 
     <div class="footer">
-        <div class="btn-group">
-            <div class="install-btn" onclick="showIosInstructions()">🍎 تثبيت للأيفون</div>
-            <a href="https://drive.google.com/file/d/1m6T2wY7gg6choxYXxUHfTGw6Un4gURIl/view?usp=sharing" target="_blank" class="install-btn">🤖 تحميل للأندرويد</a>
+        <div class="download-links">
+            <a href="https://drive.google.com/file/d/1m6T2wY7gg6choxYXxUHfTGw6Un4gURIl/view?usp=sharing" target="_blank" class="dl-btn">📥 تحميل أندرويد</a>
+            <a href="javascript:void(0)" onclick="document.getElementById('iosGuide').style.display='block'" class="dl-btn">📱 شرح الإضافة للايفون</a>
         </div>
-        <a href="https://www.instagram.com/yahya.sy998/" target="_blank" class="insta-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg"><span>@yahya.sy998</span></a>
+
+        <a href="https://www.instagram.com/yahya.sy998/" target="_blank" class="insta-btn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg">
+            <span>@yahya.sy998</span>
+        </a>
         <span class="dev-name">المطور: <b>يحيى عزام القاضي</b></span>
         <span class="disclaimer-red">هذا المشروع اجتهاد شخصي ولا يتبع لأي جهة رسمية</span>
     </div>
@@ -273,28 +341,56 @@
         function updateWords(el) { const wordEl = document.getElementById(el.id + "Words"); if(wordEl) wordEl.innerText = nToW(parseFloat(el.value) || 0); }
         function toggleMenu() { document.getElementById('sideMenu').classList.toggle('active'); }
         function showPage(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); toggleMenu(); }
-        document.getElementById('introVideo').onended = () => document.getElementById('introVideoOverlay').style.display = 'none';
-        document.getElementById('introVideoOverlay').onclick = () => document.getElementById('introVideoOverlay').style.display = 'none';
         function handleEagleClick(el, cb) { el.classList.add('rotate'); setTimeout(()=>el.classList.remove('rotate'), 600); cb(); }
 
-        window.activeConv = 'old';
+        let count = 7; let timer;
+        function startTimer() { 
+            clearInterval(timer); count = 7; 
+            timer = setInterval(() => { 
+                count--; 
+                if(document.getElementById('countdown')) document.getElementById('countdown').innerText = count; 
+                if(count <= 0) { fetchSheetData(true); count = 7; }
+            }, 1000); 
+        }
+
+        async function fetchSheetData(isSilent = false) {
+            const btn = document.getElementById('refreshBtn');
+            const status = document.getElementById('syncStatus');
+            const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjzoRHAP5Jq1v4un_feRjQdvqMxdMv5pR-CObXcP5dK2En1bmHkIN_68IzMY7w5Cr7rrthCgk6bVsY/pub?output=csv";
+            
+            if(!isSilent) btn.innerText = "⚡ جلب لحظي...";
+
+            try {
+                // استخدام AllOrigins كممر سريع لتخطي حماية CORS مع إضافة Timestamp لمنع الكاش
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(sheetUrl)}&t=${Date.now()}`;
+                
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error('Network Error');
+                
+                const data = await response.text();
+                const rows = data.split('\n').map(row => row.split(','));
+                
+                if(rows[1] && rows[1][2]) {
+                    document.getElementById('rateUsd').value = Math.round(rows[1][2]);
+                    document.getElementById('rateSar').value = Math.round(rows[2][2]);
+                    document.getElementById('rateEur').value = Math.round(rows[3][2]);
+                    document.getElementById('rateTry').value = Math.round(rows[4][2]);
+                    status.innerText = "تم التحديث اللحظي بنجاح ✅";
+                    status.style.color = "#00ff84";
+                }
+            } catch (e) {
+                status.innerText = "فشل المزامنة.. جارِ المحاولة ⚠️";
+                status.style.color = "#ff4d4d";
+            }
+            
+            btn.innerText = "🔄 تحديث الأسعار يدوياً";
+            startTimer();
+        }
+
         function doQuick() {
             let o = document.getElementById('oldIn'), n = document.getElementById('newIn');
             if(window.activeConv === 'old') n.value = (o.value / 100); else o.value = (n.value * 100);
             updateWords(o); updateWords(n);
-        }
-
-        window.currentOp = '+';
-        function setOp(op, btn) { window.currentOp = op; document.querySelectorAll('.op-btn').forEach(b=>b.classList.remove('active-op')); btn.classList.add('active-op'); }
-
-        function runMixCalc() {
-            let vO = parseFloat(document.getElementById('calcOld').value) || 0;
-            let vN = parseFloat(document.getElementById('calcNew').value) || 0;
-            let resO = window.currentOp === '+' ? vO + (vN*100) : window.currentOp === '-' ? vO - (vN*100) : window.currentOp === '*' ? vO * vN : (vN!==0 ? vO/vN : 0);
-            document.getElementById('mixResOld').innerText = "القديم: " + Math.round(resO).toLocaleString();
-            document.getElementById('mixResOldWords').innerText = nToW(resO);
-            document.getElementById('mixResNew').innerText = "الجديد: " + (resO/100).toLocaleString();
-            document.getElementById('mixResNewWords').innerText = nToW(resO/100);
         }
 
         function calculatePurchase() {
@@ -307,12 +403,32 @@
             document.getElementById('buyResNewWords').innerText = nToW(tN);
         }
 
+        function selectBuyCurrency(cur) {
+            document.querySelectorAll('#p5 .cur-col').forEach(el => el.classList.remove('selected-buy'));
+            document.getElementById('buy-' + cur).classList.add('selected-buy');
+            const map = { 'usd': 'rateUsd', 'try': 'rateTry', 'eur': 'rateEur', 'sar': 'rateSar' };
+            document.getElementById('buyExchangeRate').value = document.getElementById(map[cur]).value;
+        }
+
+        function runMixCalc() {
+            let vO = parseFloat(document.getElementById('calcOld').value) || 0;
+            let vN = parseFloat(document.getElementById('calcNew').value) || 0;
+            let resO = window.currentOp === '+' ? vO + (vN*100) : window.currentOp === '-' ? vO - (vN*100) : window.currentOp === '*' ? vO * vN : (vN!==0 ? vO/vN : 0);
+            document.getElementById('mixResOld').innerText = "القديم: " + Math.round(resO).toLocaleString();
+            document.getElementById('mixResOldWords').innerText = nToW(resO);
+            document.getElementById('mixResNew').innerText = "الجديد: " + (resO/100).toLocaleString();
+            document.getElementById('mixResNewWords').innerText = nToW(resO/100);
+        }
+        window.currentOp = '+';
+        function setOp(op, btn) { window.currentOp = op; document.querySelectorAll('.op-btn').forEach(b=>b.classList.remove('active-op')); btn.classList.add('active-op'); }
+
         function syncSliders() {
             let totalOld = parseFloat(document.getElementById('splitOld').value) || 0;
             let pctN = document.getElementById('sldNew').value;
             document.getElementById('pctN').innerText = pctN + "%";
             document.getElementById('pctO').innerText = (100 - pctN) + "%";
-            let pN = (totalOld / 100) * (pctN / 100);
+            let amountOldPart = totalOld * (pctN / 100);
+            let pN = amountOldPart / 100;
             let pO = totalOld * ((100 - pctN) / 100);
             document.getElementById('payNewRes').innerText = "ادفع جديد: " + pN.toLocaleString();
             document.getElementById('payNewResWords').innerText = nToW(pN);
@@ -326,37 +442,27 @@
                 {f:'🇺🇸', n:'دولار', r:parseFloat(document.getElementById('rateUsd').value)||0},
                 {f:'🇹🇷', n:'تركي', r:parseFloat(document.getElementById('rateTry').value)||0},
                 {f:'🇪🇺', n:'يورو', r:parseFloat(document.getElementById('rateEur').value)||0},
-                {f:'🇸🇦', n:'ريال', r:parseFloat(document.getElementById('rateSar').value)||0}
+                {f:'🇸🇦', n:'سعودي', r:parseFloat(document.getElementById('rateSar').value)||0}
             ];
-            let resBox = document.getElementById('curRes'); resBox.style.display = 'block';
+            let resBox = document.getElementById('curRes'); 
+            resBox.style.display = 'grid'; 
             resBox.innerHTML = curs.map(c => {
-                let tO = Math.round(amt * c.r); let tN = tO / 100;
-                return `<div style="margin-bottom:8px; border-bottom:1px solid #444; padding-bottom:5px;">
-                    <b style="color:#fff">${c.f} ${c.n}:</b><br>
-                    <span style="color:var(--text-old)">• قديم: ${tO.toLocaleString()}</span><br>
-                    <small style="color:#aaa">${nToW(tO)}</small><br>
-                    <span style="color:var(--text-new)">• جديد: ${tN.toLocaleString()}</span><br>
-                    <small style="color:#aaa">${nToW(tN)}</small>
+                let tO = Math.round(amt * c.r); 
+                let tN = tO / 100;
+                return `
+                <div class="res-item-box">
+                    <b>${c.f} ${c.n}</b>
+                    <span class="res-val-old">${tO.toLocaleString()} ق</span>
+                    <span class="res-val-new">${tN.toLocaleString()} ج</span>
                 </div>`;
             }).join('');
         }
 
-        function selectBuyCurrency(cur) {
-            document.querySelectorAll('#p5 .cur-col').forEach(el => el.classList.remove('selected-buy'));
-            document.getElementById('buy-' + cur).classList.add('selected-buy');
-        }
-
-        function showIosInstructions() {
-            document.getElementById('iosModal').style.display = 'flex';
-            const pointer = document.getElementById('iosPointer');
-            pointer.style.display = 'block';
-            setTimeout(() => { pointer.style.display = 'none'; }, 10000); 
-        }
-        function closeIosModal() {
-            document.getElementById('iosModal').style.display = 'none';
-            document.getElementById('iosPointer').style.display = 'none';
-        }
+        function openSiteModal() { document.getElementById('siteModal').style.display = 'flex'; }
+        function closeSiteModal() { document.getElementById('siteModal').style.display = 'none'; }
+        document.getElementById('introVideo').onended = () => document.getElementById('introVideoOverlay').style.display = 'none';
+        document.getElementById('introVideoOverlay').onclick = () => document.getElementById('introVideoOverlay').style.display = 'none';
+        window.onload = () => fetchSheetData(false);
     </script>
 </body>
 </html>
-
