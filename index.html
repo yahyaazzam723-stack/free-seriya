@@ -68,7 +68,7 @@
         .side-menu.active { right: 0; }
         .menu-item { padding: 12px; margin-bottom: 10px; border-radius: 10px; cursor: pointer; background: rgba(0,0,0,0.9); color: white; text-align: center; font-size: 0.85rem; }
 
-        .page { display: none; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding-bottom: 300px; box-sizing: border-box; }
+        .page { display: none; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding-bottom: 220px; box-sizing: border-box; }
         .page.active { display: flex; }
 
         .card { background: var(--glass); border-radius: 20px; padding: 15px; width: 92%; max-width: 380px; text-align: center; border: 1px solid rgba(255,255,255,0.1); margin-top: 10px; }
@@ -106,12 +106,13 @@
         .countdown-text { font-size: 0.8rem; color: #fff; display: block; font-weight: bold;}
         #countdown { color: var(--text-new); }
 
+        /* --- تحديث الـ Footer ليكون متوازن الحجم --- */
         .footer { 
-            text-align: center; padding: 15px 5px; background: #000; width: 100%; 
+            text-align: center; padding: 12px 5px; background: #000; width: 100%; 
             position: fixed; bottom: 0; left: 0; z-index: 1000; border-top: 2px solid var(--syria-green);
         }
 
-        .download-links { display: flex; justify: center; gap: 8px; margin-bottom: 12px; justify-content: center; }
+        .download-links { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
         .dl-btn { 
             background: rgba(0, 255, 132, 0.1); border: 1px solid var(--text-new); 
             color: var(--text-new); padding: 6px 14px; border-radius: 20px; 
@@ -119,15 +120,16 @@
         }
         
         .insta-btn { 
-            display: inline-flex; align-items: center; gap: 5px; background: #111; padding: 5px 12px; 
-            border-radius: 20px; border: 1px solid #444; color: white; text-decoration: none; font-size: 0.8rem; margin-bottom: 8px;
+            display: inline-flex; align-items: center; gap: 6px; background: #111; padding: 5px 12px; 
+            border-radius: 20px; border: 1px solid #444; color: white; text-decoration: none; font-size: 0.8rem; margin-bottom: 6px;
         }
-        .insta-btn img { width: 16px; height: 16px; }
-        .dev-name { display: block; font-size: 0.7rem; color: #888; margin-top: 4px; }
-        .disclaimer-red { display: block; font-size: 0.6rem; color: var(--syria-red); margin-top: 2px; }
+        .insta-btn img { width: 14px; height: 14px; }
+        .dev-name { display: block; font-size: 0.7rem; color: #999; margin-top: 2px; }
+        .disclaimer-red { display: block; font-size: 0.6rem; color: var(--syria-red); margin-top: 2px; font-weight: bold; }
+        /* -------------------------------------- */
 
         #iosGuide { 
-            display: none; position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+            display: none; position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%);
             background: #fff; color: #000; padding: 15px; border-radius: 15px; width: 80%; max-width: 300px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 5000; text-align: center;
         }
@@ -280,31 +282,26 @@
             <h2>💵 صرف العملات</h2>
             <div class="sync-card">
                 <button class="full-refresh-btn" id="refreshBtn" onclick="fetchSheetData()">🔄 تحديث الأسعار يدوياً</button>
-                
                 <div class="auto-sync-box">
                     <span class="countdown-text">تحديث تلقائي خلال: <b id="countdown">7</b> ث</span>
                     <span id="syncStatus" style="font-size:0.7rem; color:#aaa; display:block; margin-top:2px;">جاري الاتصال المباشر...</span>
                 </div>
             </div>
-            
             <div class="currency-grid">
                 <div class="cur-col"><img src="https://flagcdn.com/w80/us.png" class="flag-icon"><span>دولار</span><input type="number" id="rateUsd" class="small-input"></div>
                 <div class="cur-col"><img src="https://flagcdn.com/w80/tr.png" class="flag-icon"><span>تركي</span><input type="number" id="rateTry" class="small-input"></div>
                 <div class="cur-col"><img src="https://flagcdn.com/w80/eu.png" class="flag-icon"><span>يورو</span><input type="number" id="rateEur" class="small-input"></div>
                 <div class="cur-col"><img src="https://flagcdn.com/w80/sa.png" class="flag-icon"><span>سعودي</span><input type="number" id="rateSar" class="small-input"></div>
             </div>
-
             <div class="cloud-container" onclick="openSiteModal()">
                 <div class="cloud-bubble">يرجى التحقق من السعر يدوياً "اضغط هنا"</div>
             </div>
-
             <input type="number" id="amtGlobal" class="input-main" placeholder="المبلغ للتحويل" oninput="updateWords(this)">
             <span id="amtGlobalWords" class="word-hint"></span>
             <div class="eagle-container">
                 <img src="https://tse4.mm.bing.net/th/id/OIP.8bBYgubTKIxUPX7WwyXacQHaHa?rs=1&pid=ImgDetMain" class="eagle-btn" onclick="handleEagleClick(this, doAllCurrencies)">
                 <span class="eagle-hint">اضغط على النسر للتحويل</span>
             </div>
-            
             <div id="curRes" class="results-grid" style="display:none;"></div>
         </div>
     </div>
@@ -312,7 +309,7 @@
     <div class="footer">
         <div class="download-links">
             <a href="https://drive.google.com/file/d/1m6T2wY7gg6choxYXxUHfTGw6Un4gURIl/view?usp=sharing" target="_blank" class="dl-btn">📥 تحميل أندرويد</a>
-            <a href="javascript:void(0)" onclick="document.getElementById('iosGuide').style.display='block'" class="dl-btn">📱 شرح الإضافة للايفون</a>
+            <a href="javascript:void(0)" onclick="document.getElementById('iosGuide').style.display='block'" class="dl-btn">📱 شرح آيفون</a>
         </div>
 
         <a href="https://www.instagram.com/yahya.sy998/" target="_blank" class="insta-btn">
@@ -324,6 +321,7 @@
     </div>
 
     <script>
+        // السكربتات تبقى كما هي بدون تغيير لأنها تعمل بشكل صحيح
         function nToW(n) {
             if (n === 0) return "صفر ليرة";
             const units = ["", "واحد", "اثنان", "ثلاثة", "أربعة", "خمسة", "ستة", "سبعة", "ثمانية", "تسعة"];
@@ -357,19 +355,13 @@
             const btn = document.getElementById('refreshBtn');
             const status = document.getElementById('syncStatus');
             const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjzoRHAP5Jq1v4un_feRjQdvqMxdMv5pR-CObXcP5dK2En1bmHkIN_68IzMY7w5Cr7rrthCgk6bVsY/pub?output=csv";
-            
             if(!isSilent) btn.innerText = "⚡ جلب لحظي...";
-
             try {
-                // استخدام AllOrigins كممر سريع لتخطي حماية CORS مع إضافة Timestamp لمنع الكاش
                 const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(sheetUrl)}&t=${Date.now()}`;
-                
                 const response = await fetch(proxyUrl);
                 if (!response.ok) throw new Error('Network Error');
-                
                 const data = await response.text();
                 const rows = data.split('\n').map(row => row.split(','));
-                
                 if(rows[1] && rows[1][2]) {
                     document.getElementById('rateUsd').value = Math.round(rows[1][2]);
                     document.getElementById('rateSar').value = Math.round(rows[2][2]);
@@ -382,7 +374,6 @@
                 status.innerText = "فشل المزامنة.. جارِ المحاولة ⚠️";
                 status.style.color = "#ff4d4d";
             }
-            
             btn.innerText = "🔄 تحديث الأسعار يدوياً";
             startTimer();
         }
