@@ -99,7 +99,7 @@
         <p style="font-size: 13px; color: #ccc;">هل أنت متأكد يا صقر أنك قبضت المبلغ كامل من العميل؟</p>
         <input type="text" id="delivery-verify-code" class="auth-input" placeholder="أدخل كود التحقق من العميل" style="margin-top: 15px; border-color: var(--gold); border-style: dashed;">
         <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button class="btn-gold" style="margin:0; background: #2ecc71; color: #fff;" onclick="executeFinishOrder()">نعم، قبضت</button>
+            <button class="btn-gold" id="btn-confirm-delivery" style="margin:0; background: #2ecc71; color: #fff;" onclick="executeFinishOrder()">نعم، قبضت</button>
             <button class="btn-gold" style="margin:0; background: #e74c3c; color: #fff;" onclick="closeConfirmModal()">تراجع</button>
         </div>
     </div>
@@ -437,16 +437,26 @@
         }
     }
 
-    function updateWalletUI() {
+    async function updateWalletUI() {
         if (!currentUserData) return;
-        // تحميل دائم من localStorage لضمان الثبات
-        const myNetProfit = localStorage.getItem('sh_today_profit') || '0';
-        const companyGreen = localStorage.getItem('sh_company_green') || '0';
-        const companyRed = localStorage.getItem('sh_company_red') || '0';
         
-        document.getElementById('today-profit').innerText = parseFloat(myNetProfit).toLocaleString() + " ل.س";
-        document.getElementById('company-profit-rect').innerText = parseFloat(companyGreen).toLocaleString();
-        document.getElementById('company-debt-rect').innerText = parseFloat(companyRed).toLocaleString();
+        const { data: ledgerData } = await supabaseClient.from('ledger').select('*').eq('driver_id', currentUserData.id);
+        const { count: completedCount } = await supabaseClient.from('sh_public_orders').select('*', { count: 'exact', head: true }).eq('driver_id', currentUserData.id).eq('status', 'completed');
+        
+        let netProfit = 0; let companyGreen = 0; let companyRed = 0;
+        
+        if(ledgerData) {
+            ledgerData.forEach(item => {
+                netProfit += parseFloat(item.driver_share) || 0;
+                companyGreen += parseFloat(item.company_profit) || 0;
+                companyRed += parseFloat(item.discount) || 0;
+            });
+        }
+        
+        document.getElementById('today-profit').innerText = netProfit.toLocaleString() + " ل.س";
+        document.getElementById('company-profit-rect').innerText = (companyGreen).toLocaleString();
+        document.getElementById('company-debt-rect').innerText = (companyRed).toLocaleString();
+        document.getElementById('total-orders-count').innerText = completedCount || 0;
     }
 
     function startRefreshTimer() {
@@ -629,8 +639,8 @@
         document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
         if(id === 'p-main') { document.getElementById('t-main').classList.add('active'); refreshOrders(); }
         if(id === 'p-active-order') document.getElementById('t-active').classList.add('active');
-        if(id === 'p-wallet') { document.getElementById('t-wallet').classList.add('active'); loadOrderHistory(); }
-        if(id === 'p-profile') document.getElementById('t-profile').classList.add('active');
+        if(id === 'p-wallet') { document.getElementById('t-wallet').classList.add('active'); loadOrderHistory(); updateWalletUI(); }
+        if(id === 'p-profile') { document.getElementById('t-profile').classList.add('active'); updateWalletUI(); }
         if(id === 'p-finance-history') { document.getElementById('t-history').classList.add('active'); loadPaymentHistoryUI(); }
     }
 
@@ -649,9 +659,13 @@
         }
     }
 
-    function generateSettlementCode() {
+    async function generateSettlementCode() {
         if (settlementTimer) return;
         const randomCode = Math.floor(1000 + Math.random() * 9000);
+        
+        const { error } = await supabaseClient.from('drivers').update({ activation_code: String(randomCode) }).eq('id', currentUserData.id);
+        if (error) { siteNotify("فشل توليد كود التحقق"); return; }
+
         document.getElementById('current-settlement-code').innerText = randomCode;
         document.getElementById('settlement-code-display').style.display = 'block';
         document.getElementById('settlement-timer-bar-container').style.display = 'block';
@@ -689,76 +703,57 @@
 
     async function executeFinishOrder() {
         const inputCode = document.getElementById('delivery-verify-code').value.trim();
+        const btn = document.getElementById('btn-confirm-delivery');
         if(!inputCode) { siteNotify("يرجى إدخل كود التحقق من العميل"); return; }
 
-        const { data: order, error } = await supabaseClient.from('sh_public_orders').select('*').eq('id', currentOrderID).single();
-        
-        if(order && order.verify_code == inputCode) {
-            const { error: updateError } = await supabaseClient.from('sh_public_orders').update({ status: 'completed' }).eq('id', currentOrderID);
+        btn.disabled = true;
+        btn.innerText = "جاري التسجيل...";
+
+        try {
+            const { data: order, error: fetchErr } = await supabaseClient.from('sh_public_orders').select('*').eq('id', currentOrderID).single();
+            if(fetchErr || !order) throw new Error("لم يتم العثور على الطلب");
+
+            if(order.verify_code != inputCode) {
+                siteNotify("كود التحقق غير صحيح! تأكد من العميل");
+                btn.disabled = false; btn.innerText = "نعم، قبضت";
+                return;
+            }
+
+            const deliveryPrice = parseFloat(order.delivery_price) || 0; 
+            const discountAmount = parseFloat(order.discount) || 0; 
+            const totalCashToLedger = parseFloat(order.total) || 0;
+            
+            const { data: dInfo } = await supabaseClient.from('drivers').select('company_profit_percent').eq('id', currentUserData.id).single();
+            const companyRatePercent = parseFloat(dInfo?.company_profit_percent) || 20; 
+
+            const companyShareProfit = deliveryPrice * (companyRatePercent / 100); 
+            const driverShareProfit = deliveryPrice - companyShareProfit; 
+
+            const { error: ledgerError } = await supabaseClient.from('ledger').insert([{
+                driver_id: String(currentUserData.id),
+                order_id: String(order.id),
+                total_cash: totalCashToLedger,
+                company_profit: companyShareProfit,
+                discount: discountAmount,
+                driver_share: driverShareProfit,
+                created_at: new Date()
+            }]);
+
+            if(ledgerError) throw new Error("فشل في جدول ledger: " + ledgerError.message);
+
+            await supabaseClient.from('sh_public_orders').update({ status: 'completed' }).eq('id', currentOrderID);
             await supabaseClient.from('orders').update({ status: 'completed' }).eq('id', currentOrderID);
             
-            if(!updateError) {
-                const deliveryPrice = parseFloat(order.delivery_price || 0); 
-                const discountAmount = parseFloat(order.discount || 0); 
-                const companyRatePercent = 20; 
-
-                const companyShareProfit = deliveryPrice * (companyRatePercent / 100); 
-                const driverShareProfit = deliveryPrice - companyShareProfit; 
-                
-                // تحميل القيم من localStorage
-                let localWallet = parseFloat(localStorage.getItem('sh_today_profit') || 0);
-                let localGreen = parseFloat(localStorage.getItem('sh_company_green') || 0);
-                let localRed = parseFloat(localStorage.getItem('sh_company_red') || 0);
-
-                // حصة المندوب تذهب دائماً لمحفظته
-                localWallet += driverShareProfit;
-
-                if (discountAmount > 0) {
-                    // نظام الخصم الذكي: التعويض من الأخضر أولاً
-                    siteNotify(`🦅 تم استخدام خصم كامل (قسيمة)`);
-                    
-                    if (localGreen >= driverShareProfit) {
-                        // حالة: الأخضر يكفي لتعويض المندوب (مثال الـ 18,000)
-                        localGreen -= driverShareProfit;
-                    } else {
-                        // حالة: الأخضر لا يكفي، نأخذ اللي فيه والباقي يسجل باللون الأحمر (دين)
-                        const remainingToCover = driverShareProfit - localGreen;
-                        localGreen = 0;
-                        localRed += remainingToCover;
-                    }
-                } else {
-                    // حالة طبيعية: المندوب قبض كاش، حصة الشركة تضاف للأخضر
-                    localGreen += companyShareProfit;
-                }
-
-                // حفظ البيانات فوراً لكي لا تضيع عند التحديث
-                localStorage.setItem('sh_today_profit', localWallet);
-                localStorage.setItem('sh_company_green', localGreen);
-                localStorage.setItem('sh_company_red', localRed);
-
-                updateWalletUI();
-
-                // مزامنة مع السيرفر في الخلفية للتصفية الأسبوعية
-                await supabaseClient.rpc('update_driver_balances_complex', { 
-                    driver_id: currentUserData.id, 
-                    new_green: localGreen,
-                    new_red: localRed
-                });
-
-                siteNotify(`تم التسليم! المندوب: ${driverShareProfit.toLocaleString()} - الشركة: ${companyShareProfit.toLocaleString()}`);
-                
-                orderCount++;
-                document.getElementById('total-orders-count').innerText = orderCount;
-                localStorage.removeItem('active_order_id');
-                currentOrderID = null;
-                closeConfirmModal();
-                initSystem();
-                nav('p-wallet');
-            } else {
-                siteNotify("حدث خطأ أثناء تحديث حالة الطلب");
-            }
-        } else {
-            siteNotify("كود التحقق غير صحيح! تأكد من العميل");
+            siteNotify(`تم التسليم بنجاح! 🦅 حصتك: ${driverShareProfit.toLocaleString()}`);
+            localStorage.removeItem('active_order_id');
+            currentOrderID = null;
+            closeConfirmModal();
+            updateWalletUI();
+            initSystem();
+            nav('p-wallet');
+        } catch (err) {
+            siteNotify("خطأ: " + err.message);
+            btn.disabled = false; btn.innerText = "نعم، قبضت";
         }
     }
 
@@ -779,7 +774,7 @@
         if(!currentOrderID) return;
         const { data: order = {} } = await supabaseClient.from('sh_public_orders').select('lat, lng, res_address').eq('id', currentOrderID).single();
         if(target === 'customer' && order && order.lat) {
-            window.open(`https://www.google.com/maps?q=${order.lat},${order.lng}`);
+            window.open(`https://www.google.com/maps/search/?api=1&query=${order.lat},${order.lng}`);
         } else if(target === 'res') {
             const query = encodeURIComponent(order.res_address || 'مطعم شاهين');
             window.open(`https://www.google.com/maps/search/?api=1&query=${query}`);
@@ -815,7 +810,7 @@
         list.innerHTML = "";
         if(data && data.length > 0) {
             data.forEach(p => {
-                list.innerHTML += `<div class="payment-record-card"><b>دفع مبلغ:</b> ${p.amount} ل.س <br><small>تاريخ: ${new Date(p.created_at).toLocaleDateString('ar-SY')}</small></div>`;
+                list.innerHTML += `<div class=\"payment-record-card\"><b>دفع مبلغ:</b> ${p.amount} ل.س <br><small>تاريخ: ${new Date(p.created_at).toLocaleDateString('ar-SY')}</small></div>`;
             });
         } else {
             list.innerHTML = "<p style='text-align:center; color:#888; font-size:12px;'>لا يوجد سجلات دفع حالية</p>";
