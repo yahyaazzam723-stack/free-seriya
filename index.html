@@ -97,7 +97,8 @@
         <i class="fas fa-hand-holding-usd" style="font-size: 40px; color: var(--gold); margin-bottom: 15px;"></i>
         <h3 style="margin: 0 0 10px;">تأكيد قبض المبلغ</h3>
         <p style="font-size: 13px; color: #ccc;">هل أنت متأكد يا صقر أنك قبضت المبلغ كامل من العميل؟</p>
-        <input type="text" id="delivery-verify-code" class="auth-input" placeholder="أدخل كود التحقق من العميل" style="margin-top: 15px; border-color: var(--gold); border-style: dashed;">
+        <div id="cash-to-receive-display" style="background: rgba(212, 175, 55, 0.1); padding: 10px; border-radius: 10px; margin-bottom: 15px; color: var(--gold); font-weight: bold; border: 1px dashed var(--gold);"></div>
+        <input type="text" id="delivery-verify-code" class="auth-input" placeholder="أدخل كود التحقق من العميل" style="margin-top: 5px; border-color: var(--gold); border-style: dashed;">
         <div style="display: flex; gap: 10px; margin-top: 20px;">
             <button class="btn-gold" id="btn-confirm-delivery" style="margin:0; background: #2ecc71; color: #fff;" onclick="executeFinishOrder()">نعم، قبضت</button>
             <button class="btn-gold" style="margin:0; background: #e74c3c; color: #fff;" onclick="closeConfirmModal()">تراجع</button>
@@ -188,7 +189,7 @@
             <div class="work-toggle">
                 <span style="font-size: 13px; font-weight: bold; color: var(--gold);">حالة العمل (استقبال الطلبات)</span>
                 <label class="switch">
-                    <input type="checkbox" id="work-status-checkbox" checked onchange="toggleWorkStatus(this.checked)">
+                    <input type="checkbox" id="work-status-checkbox" onchange="toggleWorkStatus(this.checked)">
                     <span class="slider"></span>
                 </label>
             </div>
@@ -198,11 +199,9 @@
                 <b id="admin-driver-id">SH-LOAD</b>
             </div>
             <div style="background: rgba(212,175,55,0.1); padding: 10px; border-radius: 10px; margin-top: 10px; border: 1px solid var(--gold);">
-                <p style="margin:0; font-size: 11px; color: var(--gold);"><i class="fas fa-star"></i> تقييم العملاء لك:</p>
+                <p style="margin:0; font-size: 11px; color: var(--gold);"><i class="fas fa-star"></i> تقييمك الحالي (الأغلبية):</p>
                 <b id="driver-rating-val" style="font-size: 18px;">5.0</b> <span style="font-size: 10px; color: #ccc;">/ 5</span>
-                <div id="rating-stars" style="color: #f1c40f; font-size: 12px; margin-top: 4px;">
-                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                </div>
+                <div id="rating-stars" style="color: #f1c40f; font-size: 12px; margin-top: 4px;"></div>
             </div>
             <div style="margin-top:10px; border-top:1px solid #444; padding-top:10px;">
                 <span style="color:var(--gold);">عدد الطلبات المنجزة: </span><b id="total-orders-count">0</b>
@@ -298,7 +297,10 @@
     async function toggleWorkStatus(status) {
         if (!currentUserData) return;
         const statusText = status ? 'online' : 'offline';
+        localStorage.setItem('shaheen_work_status', statusText); // حفظ الحالة في ذاكرة المتصفح
         await supabaseClient.from('sh_admin_tracking').upsert({ id: currentUserData.id, status: statusText });
+        if (!status) { if(gpsWatch) navigator.geolocation.clearWatch(gpsWatch); gpsWatch = null; }
+        if (status) startAdminTracking();
         siteNotify(status ? "أنت الآن متاح لاستقبال الطلبات 🦅" : "تم إيقاف استقبال الطلبات حالياً");
         refreshOrders(); 
     }
@@ -312,7 +314,7 @@
         const code = document.getElementById('auth-code').value.trim();
         const btn = document.getElementById('login-btn');
 
-        if(!code || !email) { siteNotify("الرجاء إدخال الإيميل وكود التفعيل يا صقر"); return; }
+        if(!code || !email) { siteNotify("الرجاء إدخل الإيميل وكود التفعيل يا صقر"); return; }
         btn.disabled = true; btn.innerText = "جاري التحقق...";
 
         const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
@@ -375,6 +377,7 @@
                         currentUserData = { ...currentUserData, ...payload.new };
                         localStorage.setItem('shaheen_driver', JSON.stringify(currentUserData));
                         updateWalletUI();
+                        calculateWeeklyRating();
                     }
                 })
                 .subscribe();
@@ -419,6 +422,7 @@
             if(currentUserData.image_url) { document.getElementById('driver-img-display').src = currentUserData.image_url; }
 
             updateWalletUI();
+            calculateWeeklyRating();
 
             const { data: activeOrder } = await supabaseClient.from('sh_public_orders')
                 .select('*').eq('driver_id', currentUserData.id).eq('status', 'accepted').maybeSingle();
@@ -434,6 +438,33 @@
                 nav('p-main');
             }
             startRefreshTimer();
+
+            // استعادة حالة العمل من الذاكرة لضمان عدم الانفصال عند التحديث
+            const savedStatus = localStorage.getItem('shaheen_work_status');
+            if (savedStatus === 'online') {
+                document.getElementById('work-status-checkbox').checked = true;
+                startAdminTracking();
+            } else {
+                document.getElementById('work-status-checkbox').checked = false;
+                await supabaseClient.from('sh_admin_tracking').upsert({ id: currentUserData.id, status: 'offline' });
+            }
+        }
+    }
+
+    async function calculateWeeklyRating() {
+        if (!currentUserData) return;
+        const oneWeekAgo = new Date(); oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        const { data: orders } = await supabaseClient.from('orders').select('driver_rating').eq('driver_id', currentUserData.id).gte('created_at', oneWeekAgo.toISOString());
+        if (orders && orders.length > 0) {
+            const counts = {}; let maxRating = 5.0; let maxCount = 0;
+            orders.forEach(o => { if(o.driver_rating) { counts[o.driver_rating] = (counts[o.driver_rating] || 0) + 1; } });
+            for (let r in counts) { if (counts[r] >= maxCount) { maxCount = counts[r]; maxRating = r; } }
+            document.getElementById('driver-rating-val').innerText = parseFloat(maxRating).toFixed(1);
+            const stars = document.getElementById('rating-stars'); stars.innerHTML = "";
+            for (let i = 1; i <= 5; i++) { stars.innerHTML += `<i class="${i <= Math.round(maxRating) ? 'fas' : 'far'} fa-star"></i>`; }
+        } else {
+            document.getElementById('driver-rating-val').innerText = "5.0";
+            document.getElementById('rating-stars').innerHTML = `<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>`;
         }
     }
 
@@ -446,11 +477,13 @@
         let netProfit = 0; let companyGreen = 0; let companyRed = 0;
         
         if(ledgerData) {
+            let totalRunningBalance = 0;
             ledgerData.forEach(item => {
                 netProfit += parseFloat(item.driver_share) || 0;
-                companyGreen += parseFloat(item.company_profit) || 0;
-                companyRed += parseFloat(item.discount) || 0;
+                totalRunningBalance += (parseFloat(item.company_profit) || 0) - (parseFloat(item.discount) || 0);
             });
+            if (totalRunningBalance > 0) companyGreen = totalRunningBalance;
+            else companyRed = Math.abs(totalRunningBalance);
         }
         
         document.getElementById('today-profit').innerText = netProfit.toLocaleString() + " ل.س";
@@ -487,6 +520,9 @@
         refreshProgress = 0;
         const list = document.getElementById('orders-list');
         
+        const isOnline = localStorage.getItem('shaheen_work_status') === 'online';
+        if(!isOnline) { list.innerHTML = "<div style='text-align:center; color:#888; margin-top:50px;'><i class='fas fa-toggle-off' style='font-size:30px; display:block; margin-bottom:10px;'></i> شغل (حالة العمل) لتبدأ بالصيد يا صقر 🦅</div>"; return; }
+
         if(currentOrderID) {
             const { data: checkActive } = await supabaseClient.from('sh_public_orders').select('status').eq('id', currentOrderID).maybeSingle();
             if(!checkActive || checkActive.status !== 'accepted') {
@@ -647,7 +683,7 @@
     async function startAdminTracking() {
         if (!currentUserData) return;
         if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(async pos => {
+            gpsWatch = navigator.geolocation.watchPosition(async pos => {
                 await supabaseClient.from('sh_admin_tracking').upsert({
                     id: currentUserData.id,
                     lat: pos.coords.latitude,
@@ -688,65 +724,79 @@
         if(confirm("هل تريد تسجيل الخروج يا صقر؟")) {
             await supabaseClient.auth.signOut();
             localStorage.removeItem('shaheen_driver');
+            localStorage.removeItem('shaheen_work_status'); // مسح الحالة عند الخروج
             localStorage.removeItem('active_order_id');
             location.reload();
         }
     }
 
-    function openConfirmModal() {
+    async function openConfirmModal() {
+        if(!currentOrderID) return;
+        const { data: order } = await supabaseClient.from('sh_public_orders').select('total').eq('id', currentOrderID).single();
+        if(order) {
+            document.getElementById('cash-to-receive-display').innerText = `المبلغ المطلوب استلامه نقداً: ${order.total.toLocaleString()} ل.س`;
+        }
         document.getElementById('confirm-modal').classList.add('active');
     }
 
     function closeConfirmModal() {
         document.getElementById('confirm-modal').classList.remove('active');
+        document.getElementById('delivery-verify-code').value = "";
     }
 
     async function executeFinishOrder() {
         const inputCode = document.getElementById('delivery-verify-code').value.trim();
         const btn = document.getElementById('btn-confirm-delivery');
         if(!inputCode) { siteNotify("يرجى إدخل كود التحقق من العميل"); return; }
-
         btn.disabled = true;
         btn.innerText = "جاري التسجيل...";
-
         try {
             const { data: order, error: fetchErr } = await supabaseClient.from('sh_public_orders').select('*').eq('id', currentOrderID).single();
             if(fetchErr || !order) throw new Error("لم يتم العثور على الطلب");
-
             if(order.verify_code != inputCode) {
                 siteNotify("كود التحقق غير صحيح! تأكد من العميل");
                 btn.disabled = false; btn.innerText = "نعم، قبضت";
                 return;
             }
-
             const deliveryPrice = parseFloat(order.delivery_price) || 0; 
-            const discountAmount = parseFloat(order.discount) || 0; 
-            const totalCashToLedger = parseFloat(order.total) || 0;
-            
-            const { data: dInfo } = await supabaseClient.from('drivers').select('company_profit_percent').eq('id', currentUserData.id).single();
-            const companyRatePercent = parseFloat(dInfo?.company_profit_percent) || 20; 
-
-            const companyShareProfit = deliveryPrice * (companyRatePercent / 100); 
-            const driverShareProfit = deliveryPrice - companyShareProfit; 
-
-            const { error: ledgerError } = await supabaseClient.from('ledger').insert([{
+            const totalDiscount = parseFloat(order.discount) || 0; 
+            const totalCashToReceive = parseFloat(order.total) || 0;
+            const companyRatePercent = 0.20; 
+            const driverRatePercent = 0.80;
+            let currentOrderCompanyProfit = deliveryPrice * companyRatePercent; 
+            let currentOrderDriverShare = deliveryPrice * driverRatePercent; 
+            const { data: ledgerHistory } = await supabaseClient.from('ledger').select('company_profit, discount').eq('driver_id', currentUserData.id);
+            let totalOldCompanyBalance = 0;
+            if(ledgerHistory) {
+                totalOldCompanyBalance = ledgerHistory.reduce((acc, curr) => acc + (parseFloat(curr.company_profit) || 0) - (parseFloat(curr.discount) || 0), 0);
+            }
+            let totalActualAvailableForDiscount = totalOldCompanyBalance + currentOrderCompanyProfit;
+            let finalCompanyProfitEntry = 0;
+            let finalDiscountEntry = 0;
+            if (totalActualAvailableForDiscount >= totalDiscount) {
+                finalCompanyProfitEntry = currentOrderCompanyProfit - totalDiscount;
+                finalDiscountEntry = 0;
+            } else {
+                finalCompanyProfitEntry = -totalOldCompanyBalance;
+                finalDiscountEntry = totalDiscount - totalActualAvailableForDiscount;
+            }
+            const ledgerTask = supabaseClient.from('ledger').insert([{
                 driver_id: String(currentUserData.id),
                 order_id: String(order.id),
-                total_cash: totalCashToLedger,
-                company_profit: companyShareProfit,
-                discount: discountAmount,
-                driver_share: driverShareProfit,
+                total_cash: totalCashToReceive,
+                company_profit: finalCompanyProfitEntry,
+                discount: finalDiscountEntry,
+                driver_share: currentOrderDriverShare,
                 created_at: new Date()
             }]);
-
-            if(ledgerError) throw new Error("فشل في جدول ledger: " + ledgerError.message);
-
-            await supabaseClient.from('sh_public_orders').update({ status: 'completed' }).eq('id', currentOrderID);
-            await supabaseClient.from('orders').update({ status: 'completed' }).eq('id', currentOrderID);
-            
-            siteNotify(`تم التسليم بنجاح! 🦅 حصتك: ${driverShareProfit.toLocaleString()}`);
+            const updatePublicTask = supabaseClient.from('sh_public_orders').update({ status: 'completed' }).eq('id', currentOrderID);
+            const updateOrdersTask = supabaseClient.from('orders').update({ status: 'completed' }).eq('id', currentOrderID);
+            await Promise.all([ledgerTask, updatePublicTask, updateOrdersTask]);
+            siteNotify(`تم التسليم بنجاح! 🦅 حصتك: ${currentOrderDriverShare.toLocaleString()}`);
             localStorage.removeItem('active_order_id');
+            const finishedOrderID = currentOrderID;
             currentOrderID = null;
+            document.getElementById('delivery-verify-code').value = "";
             closeConfirmModal();
             updateWalletUI();
             initSystem();
@@ -754,6 +804,8 @@
         } catch (err) {
             siteNotify("خطأ: " + err.message);
             btn.disabled = false; btn.innerText = "نعم، قبضت";
+        } finally {
+            if (btn.innerText === "جاري التسجيل...") { btn.disabled = false; btn.innerText = "نعم، قبضت"; }
         }
     }
 
@@ -761,7 +813,8 @@
         const { data: order } = await supabaseClient.from('sh_public_orders').select('*').eq('id', key).single();
         if(order) {
             document.getElementById('active-res-name').innerText = order.res || order.res_name;
-            document.getElementById('active-bill-info').innerHTML = `<b>العميل:</b> ${order.customer_name}<br><b>المبلغ المطلوب:</b> ${order.total} ل.س<br><b>سعر التوصيل:</b> ${order.delivery_price} ل.س`;
+            let discountInfo = order.discount > 0 ? `<br><b style="color:#e74c3c;">تم استخدام خصم: -${order.discount} ل.س</b>` : "";
+            document.getElementById('active-bill-info').innerHTML = `<b>العميل:</b> ${order.customer_name}<br><b>المبلغ المطلوب:</b> ${order.total} ل.س<br><b>سعر التوصيل:</b> ${order.delivery_price} ل.س ${discountInfo}`;
             if(order.phone) {
                 const waUrl = `https://wa.me/${order.phone}`;
                 document.getElementById('whatsapp-direct-btn-large').onclick = () => window.open(waUrl);
@@ -791,13 +844,12 @@
     async function handleFileUpload(input) {
         if (!input.files || input.files.length === 0) return;
         const file = input.files[0];
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${currentUserData.id}_${Math.random()}.${fileExt}`;
-        const filePath = `driver_avatars/${fileName}`;
+        const fileName = `${currentUserData.id}_${Date.now()}.jpg`;
         siteNotify("جاري رفع صورة الصقر...");
-        const { error: uploadError } = await supabaseClient.storage.from('avatars').upload(filePath, file);
-        if (uploadError) { siteNotify("فشل رفع الصورة"); return; }
-        const { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(filePath);
+        // الحل لمشكلة Bucket not found هو التأكد من إنشاء bucket باسم 'avatars' في السوبا بيس وجعلها Public
+        const { data: up, error: err } = await supabaseClient.storage.from('avatars').upload(fileName, file, {cacheControl: '3600', upsert: true});
+        if (err) { siteNotify("فشل الرفع: تأكد من وجود Bucket باسم avatars في Supabase Storage وجعله Public"); return; }
+        const { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(fileName);
         await supabaseClient.from('drivers').update({ image_url: publicUrl }).eq('id', currentUserData.id);
         document.getElementById('driver-img-display').src = publicUrl;
         siteNotify("تم تحديث صورتك بنجاح! 🦅");
