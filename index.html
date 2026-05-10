@@ -2,907 +2,610 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>لوحة الصقر | شاهين إكسبريس 🦅</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hook Restaurant | مطعم ذا هوك - حماة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --gold: #d4af37; --purple: #1a051a; --glass: rgba(30, 10, 30, 0.95); }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; transition: 0.3s; }
-        body, html { margin: 0; padding: 0; height: 100vh; background: #000; color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; }
-        
-        .app-shell { 
-            width: 375px; height: 812px; max-height: 95vh; 
-            background: var(--purple); border: 2px solid var(--gold); border-radius: 40px; 
-            position: relative; display: flex; flex-direction: column; overflow: hidden; z-index: 10;
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+
+        :root {
+            --primary-color: #ffcc00;
+            --secondary-color: #f39c12;
+            --bg-dark: #0b0b0b;
+            --card-bg: #1a1a1a;
+            --text-white: #ffffff;
         }
 
-        .app-shell::before {
-            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 300px; height: 300px; background: url('https://i.postimg.cc/QxzPkmPf/Whats-App-Image-2026-04-10-at-6-22-30-PM-t7edrz.jpg') no-repeat center/contain;
-            opacity: 0.15; pointer-events: none; z-index: 1;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            scroll-behavior: smooth;
         }
 
-        .page { display: none; padding: 20px; flex-grow: 1; overflow-y: auto; padding-bottom: 100px; position: relative; z-index: 5; }
-        .page.active { display: flex; flex-direction: column; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        #p-main::after {
-            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 280px; height: 280px; background: url('https://i.postimg.cc/QxzPkmPf/Whats-App-Image-2026-04-10-at-6-22-30-PM-t7edrz.jpg') no-repeat center/contain;
-            opacity: 0.12; pointer-events: none; z-index: -1;
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            overflow-x: hidden;
         }
 
-        .card { background: var(--glass); border-radius: 20px; padding: 12px; margin-bottom: 10px; border: 1px solid rgba(212, 175, 55, 0.2); width: 95%; margin-left: auto; margin-right: auto; }
-        .btn-gold { background: var(--gold); color: #000; border: none; padding: 10px; border-radius: 12px; font-weight: bold; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; font-size: 13px; }
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            z-index: 1000;
+            transition: 0.5s;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+        }
 
-        .chat-area { flex: 1; background: rgba(0,0,0,0.4); border-radius: 15px; margin: 15px 0; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #333; }
-        #chat-content { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .msg { padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 13px; line-height: 1.4; }
-        .msg.driver { background: var(--gold); color: #000; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .msg.client { background: #333; color: #fff; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .navbar.scrolled {
+            background: rgba(0, 0, 0, 0.95);
+            padding: 12px 8%;
+            border-bottom: 1px solid var(--primary-color);
+        }
 
-        .quick-msgs { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 5px; }
-        .cl { background: #222; border: 1px solid var(--gold); color: var(--gold); padding: 5px 10px; border-radius: 15px; font-size: 10px; white-space: nowrap; cursor: pointer; }
+        .logo {
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: var(--text-white);
+            text-decoration: none;
+        }
 
-        #site-notify { position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 90%; background: var(--gold); color: #000; padding: 15px; border-radius: 20px; text-align: center; font-weight: bold; z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        #site-notify.show { top: 20px; }
+        .logo span { color: var(--primary-color); }
 
-        #confirm-modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); width: 85%; background: var(--glass); border: 2px solid var(--gold); border-radius: 30px; padding: 25px; text-align: center; z-index: 10000; display: none; opacity: 0; transition: 0.3s; }
-        #confirm-modal.active { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .nav-links { display: flex; list-style: none; }
+        .nav-links li a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
 
-        #admin-alert-modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 320px; background: rgba(15, 0, 15, 0.98); backdrop-filter: blur(20px); border: 3px solid var(--gold); border-radius: 20px; padding: 30px; text-align: center; z-index: 20000; display: none; box-shadow: 0 0 40px rgba(212, 175, 55, 0.3); }
+        .nav-links li a:hover { color: var(--primary-color); }
 
-        #suspend-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--purple); z-index: 30000; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; border-radius: inherit; }
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
 
-        .tab-bar { height: 70px; background: #000; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--gold); position: absolute; bottom: 0; width: 100%; padding-bottom: 10px; z-index: 100; }
-        .tab-item { color: #555; text-align: center; font-size: 9px; cursor: pointer; flex: 1; }
-        .tab-item.active { color: var(--gold); }
-        .tab-item i { font-size: 18px; display: block; margin-bottom: 4px; }
+        .hero-video-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+        }
 
-        .auth-input { width: 100%; background: #000; border: 1px solid #444; color: #fff; padding: 15px; border-radius: 15px; margin-bottom: 15px; outline: none; text-align: center; font-size: 16px; }
+        #hero-video {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
+            z-index: 0;
+        }
+
+        .hero-content { z-index: 1; padding: 0 20px; }
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
+            line-height: 1.2;
+        }
+
+        .hero-content p {
+            font-size: clamp(1.1rem, 3vw, 1.8rem);
+            margin-bottom: 40px;
+            color: #efefef;
+            max-width: 800px;
+            margin-inline: auto;
+        }
+
+        .btn-group { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+
+        .btn {
+            padding: 15px 40px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            transition: 0.4s;
+            display: inline-block;
+        }
+
+        .btn-primary { background: var(--primary-color); color: #000; border: 2px solid var(--primary-color); }
+        .btn-primary:hover { background: transparent; color: var(--primary-color); }
+
+        .btn-secondary { background: transparent; color: #fff; border: 2px solid #fff; }
+        .btn-secondary:hover { background: #fff; color: #000; }
+
+        /* Delivery Section */
+        .features { padding: 100px 8%; background: var(--bg-dark); position: relative; }
+        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 50px 30px;
+            border-radius: 20px;
+            text-align: center;
+            border-bottom: 4px solid transparent;
+            transition: 0.4s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 30px rgba(255, 204, 0, 0.1);
+        }
+
+        .feature-card i { font-size: 50px; color: var(--primary-color); margin-bottom: 25px; }
+        .feature-card h3 { font-size: 1.8rem; margin-bottom: 15px; }
+        .feature-card p { color: #aaa; font-size: 1.1rem; }
+
+        /* Menu Categories Section */
+        .menu-categories { padding: 80px 8%; background: #0b0b0b; text-align: center; }
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; margin-top: 40px; }
         
-        .work-toggle { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; margin-top: 10px; border: 1px solid rgba(212, 175, 55, 0.1); }
-        .switch { position: relative; display: inline-block; width: 44px; height: 20px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 20px; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--gold); }
-        input:checked + .slider:before { transform: translateX(24px); }
-
-        .history-item { border-bottom: 1px solid rgba(212, 175, 55, 0.1); padding: 10px 0; font-size: 12px; }
+        .category-item { 
+            background: var(--card-bg); 
+            border-radius: 20px; 
+            overflow: hidden; 
+            border: 1px solid #333; 
+            transition: 0.3s;
+            position: relative;
+            height: 250px;
+            cursor: pointer;
+        }
         
-        .payment-record-card { background: rgba(0,0,0,0.3); border-left: 4px solid var(--gold); padding: 12px; margin-bottom: 10px; border-radius: 10px; font-size: 12px; }
-        
-        .reward-badge { background: linear-gradient(45deg, var(--gold), #fff); color: #000; padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 10px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .category-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+            transition: 0.5s;
+        }
 
-        .refresh-progress-container { width: 95%; margin: 0 auto 15px; height: 30px; background: rgba(255,255,255,0.05); border: 1px solid var(--gold); border-radius: 10px; position: relative; overflow: hidden; cursor: pointer; }
-        #refresh-bar { height: 100%; width: 0%; background: var(--gold); transition: width 0.1s linear; }
-        .refresh-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 11px; font-weight: bold; color: #fff; mix-blend-mode: difference; z-index: 2; pointer-events: none; }
+        .category-item:hover img {
+            opacity: 0.4;
+            transform: scale(1.1);
+        }
 
-        #settlement-timer-bar-container { width: 100%; height: 4px; background: #222; margin-top: 8px; border-radius: 2px; overflow: hidden; display: none; }
-        #settlement-timer-bar { width: 100%; height: 100%; background: var(--gold); transition: width 1s linear; }
-        .status-rect { width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; margin-bottom: 10px; text-align: center; font-size: 14px; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .status-rect.positive { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border-color: #2ecc71; }
-        .status-rect.negative { background: rgba(231, 76, 60, 0.2); color: #e74c3c; border-color: #e74c3c; }
-        .blurred-profit { filter: blur(5px); pointer-events: none; user-select: none; }
+        .click-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--primary-color);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 900;
+            opacity: 0;
+            transition: 0.4s;
+            white-space: nowrap;
+            z-index: 5;
+        }
+
+        .category-item:hover .click-overlay {
+            opacity: 1;
+        }
+
+        .category-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            text-align: right;
+            z-index: 2;
+        }
+
+        .category-item:hover { border-color: var(--primary-color); }
+        .category-item h4 { color: var(--primary-color); font-size: 1.4rem; margin-bottom: 5px; }
+        .category-item span { color: #fff; font-size: 1rem; font-weight: bold; }
+
+        /* Detailed Menu List Styles */
+        .detailed-menu { padding: 60px 8%; background: #0f0f0f; display: none; } 
+        .menu-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 30px; }
+        .menu-column h3 { color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+        .menu-item { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 5px; border-bottom: 1px dashed #333; }
+        .menu-item .name { font-weight: bold; }
+        .menu-item .price { color: var(--primary-color); font-weight: 900; }
+
+        /* Working Hours Section */
+        .working-hours { padding: 80px 8%; background: #0b0b0b; text-align: center; }
+        .hours-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 30px; }
+        .hour-card { background: var(--card-bg); padding: 15px; border-radius: 15px; border: 1px solid #333; }
+        .hour-card span { display: block; }
+        .hour-day { color: var(--primary-color); font-weight: bold; margin-bottom: 5px; }
+
+        /* Gallery Section */
+        .gallery { padding: 100px 8%; background: #111; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 3rem; color: var(--primary-color); }
+
+        .insta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .insta-item {
+            position: relative;
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .insta-item img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: 0.6s;
+        }
+
+        .insta-item:hover img { transform: scale(1.1); filter: brightness(0.6); }
+
+        .insta-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: 0.4s;
+            font-size: 2rem;
+            color: #fff;
+        }
+
+        .insta-item:hover .insta-overlay { opacity: 1; }
+
+        /* Footer and Contact Styles */
+        footer {
+            padding: 60px 8% 30px;
+            background: #000;
+            text-align: center;
+            border-top: 1px solid var(--primary-color);
+        }
+
+        .contact-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .contact-box {
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+            transition: 0.3s;
+            text-decoration: none;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .contact-box:hover { transform: scale(1.05); background: #222; }
+        .contact-box i { color: var(--primary-color); font-size: 1.5rem; }
+        .contact-box span { font-weight: bold; font-size: 1.1rem; }
+
+        .social-links { margin-bottom: 20px; }
+        .social-links a { font-size: 24px; color: #fff; margin: 0 15px; transition: 0.3s; }
+        .social-links a:hover { color: var(--primary-color); }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero-content h1 { font-size: 2.5rem; }
+            .contact-container { flex-direction: column; align-items: center; }
+        }
     </style>
 </head>
 <body>
 
-<div class="app-shell">
-    <div id="site-notify"></div>
+    <nav class="navbar" id="main-nav">
+        <a href="#" class="logo">THE <span>HOOK</span></a>
+        <ul class="nav-links">
+            <li><a href="#home">الرئيسية</a></li>
+            <li><a href="#menu-cats">المنيو</a></li>
+            <li><a href="#gallery">معرض الصور</a></li>
+            <li><a href="#contact">تواصل معنا</a></li>
+        </ul>
+        <a href="https://wa.me/963932221340" target="_blank" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">اطلب الآن</a>
+    </nav>
 
-    <div id="confirm-modal">
-        <i class="fas fa-handholding-usd" style="font-size: 40px; color: var(--gold); margin-bottom: 15px;"></i>
-        <h3 style="margin: 0 0 10px;">تأكيد قبض المبلغ</h3>
-        <p style="font-size: 13px; color: #ccc;">هل أنت متأكد يا صقر أنك قبضت المبلغ كامل من العميل؟</p>
-        <div id="cash-to-receive-display" style="background: rgba(212, 175, 55, 0.1); padding: 10px; border-radius: 10px; margin-bottom: 15px; color: var(--gold); font-weight: bold; border: 1px dashed var(--gold);"></div>
-        <input type="text" id="delivery-verify-code" class="auth-input" placeholder="أدخل كود التحقق من العميل" style="margin-top: 5px; border-color: var(--gold); border-style: dashed;">
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button class="btn-gold" id="btn-confirm-delivery" style="margin:0; background: #2ecc71; color: #fff;" onclick="executeFinishOrder()">نعم، قبضت</button>
-            <button class="btn-gold" style="margin:0; background: #e74c3c; color: #fff;" onclick="closeConfirmModal()">تراجع</button>
+    <header class="hero" id="home">
+        <div class="hero-video-container">
+            <video autoplay muted loop id="hero-video" poster="https://i.ibb.co/mrS7QCvy/image.jpg">
+                <source src="https://www.image2url.com/r2/default/videos/1778409117808-17db6e67-dccd-463b-b49a-d08f29b006bb.mp4" type="video/mp4">
+            </video>
         </div>
-    </div>
-
-    <div id="admin-alert-modal">
-        <div style="background: var(--gold); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 0 20px var(--gold);">
-            <i class="fas fa-paper-plane" style="font-size: 1.8rem; color: #000;"></i>
-        </div>
-        <h3 style="margin: 0 0 15px; color: var(--gold); letter-spacing: 1px;">تنبيه عاجل من المقر 🦅</h3>
-        <p id="admin-alert-text" style="font-size: 15px; color: #fff; line-height: 1.6; margin-bottom: 25px; font-weight: 500;"></p>
-        <button class="btn-gold" onclick="closeAdminAlert()" style="box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);"><i class="fas fa-check-circle"></i> فهمت، جاري التنفيذ</button>
-    </div>
-
-    <div id="suspend-modal">
-        <img src="https://i.postimg.cc/QxzPkmPf/Whats-App-Image-2026-04-10-at-6-22-30-PM-t7edrz.jpg" style="width:120px; border-radius:50%; border:3px solid var(--gold); margin-bottom:20px;">
-        <h2 style="color:var(--gold);">عذراً أيها الصقر 🦅</h2>
-        <p id="suspend-msg" style="font-size: 16px; line-height: 1.6; color:#fff;">حسابك موقف حالياً، راجع الإدارة لكي تحلق من جديد</p>
-        <div style="margin-top:30px; padding:15px; border:1px dashed var(--gold); border-radius:15px; width:100%;">
-            <p style="font-size:12px; color:var(--gold);">للمراجعة الفورية تواصل واتساب:</p>
-            <a href="https://wa.me/966546083283" target="_blank" style="color:#fff; text-decoration:none; font-weight:bold; display:block; margin-top:5px;">0546083283</a>
-        </div>
-    </div>
-
-    <div id="p-auth" class="page active" style="justify-content: center; align-items: center; text-align: center;">
-        <img src="https://i.postimg.cc/QxzPkmPf/Whats-App-Image-2026-04-10-at-6-22-30-PM-t7edrz.jpg" style="width:100px; margin-bottom:20px; border-radius:50%; border:2px solid var(--gold);">
-        <h2 style="color:var(--gold);">دخول الصقور 🦅</h2>
-        <p style="font-size:12px; color:#aaa; margin-bottom:20px;">يرجى إدخل بياناتك المعتمدة من الإدارة</p>
-        <input type="email" id="auth-email" class="auth-input" placeholder="البريد الإلكتروني">
-        <input type="text" id="auth-code" class="auth-input" placeholder="كود التفعيل">
-        <button class="btn-gold" id="login-btn" onclick="login()">دخول النظام</button>
-    </div>
-
-    <div id="p-main" class="page">
-        <div style="text-align:center; margin-bottom:10px;">
-            <img src="https://i.postimg.cc/QxzPkmPf/Whats-App-Image-2026-04-10-at-6-22-30-PM-t7edrz.jpg" style="width:60px; height:60px; object-fit:contain; border-radius:50%;">
-        </div>
-        <h2 style="color:var(--gold); text-align:center; margin-top:0;">طلبات شاهين 🦅</h2>
-        <div class="work-toggle" style="margin-bottom: 12px; width: 95%; margin-left: auto; margin-right: auto; background: rgba(212, 175, 55, 0.1);">
-            <span style="font-size: 12px; font-weight: bold; color: var(--gold);">حالة استقبال الطلبات</span>
-            <label class="switch">
-                <input type="checkbox" id="main-work-status-checkbox" onchange="toggleWorkStatus(this.checked)">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="refresh-progress-container" onclick="refreshOrders()">
-            <div id="refresh-bar"></div>
-            <div class="refresh-text"><i class="fas fa-sync-alt"></i> جاري البحث عن صيد جديد...</div>
-        </div>
-        <div id="orders-list" style="position: relative; z-index: 10;"></div>
-    </div>
-
-    <div id="p-wallet" class="page">
-        <h2 style="color:var(--gold); text-align:center;">محفظة الصقر 💰</h2>
-        <div class="card" style="text-align:center;">
-            <p style="margin-bottom: 5px;">حصتك الشخصية الصافية</p>
-            <h1 id="today-profit">0 ل.س</h1>
-        </div>
-        <div id="wallet-positive-rect" class="status-rect positive blurred-profit">أرباح الشركة المستحقة (الأخضر): <span id="company-profit-rect">0</span> ل.س</div>
-        <div id="wallet-negative-rect" class="status-rect negative">مستحقاتك على الشركة (الأحمر): <span id="company-debt-rect">0</span> ل.س</div>
-        <div class="card" style="border-color: var(--gold); background: rgba(212, 175, 55, 0.05);">
-            <div id="settlement-code-display" style="display:none; margin: 10px 0; padding: 10px; background: #000; border-radius: 10px; border: 1px dashed var(--gold);">
-                <span style="font-size: 11px; color: var(--gold); display: block;">كود التصفية للمدير (صالح لـ 15 ثانية):</span>
-                <b id="current-settlement-code" style="font-size: 20px; letter-spacing: 3px;">----</b>
-                <div id="settlement-timer-bar-container" style="display:block;"><div id="settlement-timer-bar"></div></div>
-            </div>
-            <button id="btn-gen-code" class="btn-gold" style="background:var(--gold); color:#000; font-size: 12px;" onclick="generateSettlementCode()"><i class="fas fa-key"></i> توليد كود التصفية للإدارة</button>
-            <button id="btn-request-settle" class="btn-gold" style="background:#3498db; color:#fff; font-size: 12px; margin-top:10px;" onclick="requestPersonalSettlement()"><i class="fas fa-broom"></i> تصفية العدادات الآن</button>
-            <small style="color: #aaa; font-size: 9px; margin-top: 5px; display: block; text-align: center;">* التصفية الأسبوعية تتم في مقر الشركة</small>
-        </div>
-        <h3 style="color:var(--gold);"><i class="fas fa-history"></i> سجل العمليات الملون</h3>
-        <div id="transactions-list" class="card" style="max-height: 250px; overflow-y: auto;"></div>
-    </div>
-
-    <div id="p-finance-history" class="page">
-        <h2 style="color:var(--gold); text-align:center;">سجل دفعات الإدارة 📋</h2>
-        <div class="card" style="background: rgba(212, 175, 55, 0.05); text-align: center;">
-            <p style="font-size: 13px;">هنا تظهر كافة المبالغ التي قمت بتسليمها للشركة</p>
-        </div>
-        <div id="payment-history-list" style="margin-top: 10px;">
-            <p style="text-align: center; color: #888; font-size: 12px;">لا يوجد سجلات دفع حالية</p>
-        </div>
-    </div>
-
-    <div id="p-profile" class="page">
-        <h2 style="color:var(--gold); text-align:center;">حساب الصقر 👤</h2>
-        <div class="card" style="text-align:center;">
-            <div style="width:70px; height:70px; background:var(--gold); border-radius:50%; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; overflow:hidden; border: 2px solid var(--gold);">
-                <img id="driver-img-display" src="https://i.postimg.cc/QxzPkmPf/Whats-App-Image-2026-04-10-at-6-22-30-PM-t7edrz.jpg" style="width:100%; height:100%; object-fit:cover;">
-            </div>
-            <h3 id="profile-name">تحميل...</h3>
-            <p style="font-size:12px; color:#aaa;">كابتن معمنت - شاهين إكسبريس</p>
-            
-            <div class="work-toggle">
-                <span style="font-size: 12px; font-weight: bold; color: var(--gold);">حالة استقبال الطلبات</span>
-                <label class="switch">
-                    <input type="checkbox" id="work-status-checkbox" onchange="toggleWorkStatus(this.checked)">
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-top: 10px;">
-                <p style="margin:0; font-size: 11px; color: var(--gold);">رقم المندوب المعتمد (ID):</p>
-                <b id="admin-driver-id">SH-LOAD</b>
-            </div>
-            <div style="background: rgba(212,175,55,0.1); padding: 10px; border-radius: 10px; margin-top: 10px; border: 1px solid var(--gold);">
-                <p style="margin:0; font-size: 11px; color: var(--gold);"><i class="fas fa-star"></i> تقييمك الحالي (الأغلبية):</p>
-                <b id="driver-rating-val" style="font-size: 18px;">5.0</b> <span style="font-size: 10px; color: #ccc;">/ 5</span>
-                <div id="rating-stars" style="color: #f1c40f; font-size: 12px; margin-top: 4px;"></div>
-            </div>
-            <div style="margin-top:10px; border-top:1px solid #444; padding-top:10px;">
-                <span style="color:var(--gold);">عدد الطلبات المنجزة: </span><b id="total-orders-count">0</b>
+        <div class="overlay"></div>
+        <div class="hero-content">
+            <h1>أهلاً بك في عالم <span style="color:var(--primary-color)">THE HOOK</span></h1>
+            <p>المذاق الأصيل والجو الفخم في قلب مدينة حماه</p>
+            <div class="btn-group">
+                <a href="#menu-cats" class="btn btn-primary">استعرض المنيو</a>
+                <a href="https://wa.me/963932221340" target="_blank" class="btn btn-secondary">اطلب الآن</a>
             </div>
         </div>
-        
-        <div class="card">
-            <h4 style="color:var(--gold); margin-top:0;"><i class="fas fa-id-card"></i> تحديث الصورة الشخصية</h4>
-            <input type="file" id="driver-file-input" accept="image/*" style="display: none;" onchange="handleFileUpload(this)">
-            <button class="btn-gold" style="font-size: 12px;" onclick="document.getElementById('driver-file-input').click()"><i class="fas fa-upload"></i> ارفع صورتك الشخصية</button>
-        </div>
+    </header>
 
-        <div class="card">
-            <h4 style="color:var(--gold); margin-top:0;"><i class="fas fa-headset"></i> تواصل مع الإدارة (واتساب)</h4>
-            <button class="btn-gold" style="background:#25D366; color:#fff;" onclick="openAdminChat()"><i class="fab fa-whatsapp"></i> تواصل الآن (الإدارة العامة)</button>
-        </div>
-        <button class="btn-gold" style="background: #e74c3c; color: #fff; margin-top: 20px;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
-    </div>
-
-    <div id="p-active-order" class="page">
-        <div style="display:flex; align-items:center; gap:8px;">
-            <i class="fas fa-arrow-right" onclick="nav('p-main')" style="color:var(--gold); font-size: 16px;"></i>
-            <h3 id="active-res-name" style="margin:0; font-size: 16px;">تجهيز الطلب</h3>
-        </div>
-
-        <div id="active-bill-info" style="font-size: 11px; margin-top:10px; color:#aaa; background: rgba(212, 175, 55, 0.05); padding: 10px; border-radius: 10px;"></div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top:12px;">
-            <button class="btn-gold" style="background:#3498db; color:#fff; font-size:10px;" onclick="openMap('res')"><i class="fas fa-utensils"></i> المطعم</button>
-            <button class="btn-gold" style="font-size:10px;" onclick="openMap('customer')"><i class="fas fa-user-pin"></i> الموقع</button>
-            <button class="btn-gold" style="background:#f39c12; color:#fff; font-size:10px;" onclick="openAdminChat()"><i class="fas fa-headset"></i> الإدارة</button>
-        </div>
-
-        <div class="chat-area">
-            <div id="chat-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px;">
-                <i class="fab fa-whatsapp fa-3x" style="color: #25d366; margin-bottom: 12px;"></i>
-                <h4 style="color: #fff; font-size: 15px;">تواصل مع العميل عبر واتساب</h4>
-                <p style="font-size: 10px; color: #ccc;">لضمان سرعة الخدمة، تم تفعيل التواصل المباشر</p>
-                <button id="whatsapp-direct-btn-large" class="btn-gold" style="background: #25d366; color: #fff; width: 85%; margin-top: 12px;">
-                    <i class="fab fa-whatsapp"></i> فتح واتساب العميل
-                </button>
+    <section class="features" id="delivery">
+        <div class="container">
+            <div class="feature-card">
+                <i class="fas fa-motorcycle"></i>
+                <h3>توصيل لكافة حماه</h3>
+                <p>وجبتك المفضلة تصلك ساخنة وطازجة أينما كنت في المدينة بأسرع وقت ممكن.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-utensils"></i>
+                <h3>جودة عالمية</h3>
+                <p>نستخدم أجود أنواع اللحوم والخضروات الطازجة يومياً لنضمن لك طعماً لا ينسى.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-heart"></i>
+                <h3>أجواء عائلية</h3>
+                <p>صالتنا مجهزة لاستقبالكم بأرقى الديكورات وأفضل خدمة لإرضاء عائلتكم.</p>
             </div>
         </div>
+    </section>
 
-        <div id="res-status-notification" style="display:none; background:rgba(46, 204, 113, 0.2); border: 1px solid #2ecc71; padding: 10px; border-radius: 12px; margin-bottom: 12px; text-align: center; animation: pulse 2s infinite;">
-            <i class="fas fa-bell" style="color: #2ecc71; margin-left: 5px;"></i>
-            <span id="res-status-text" style="color: #fff; font-size: 12px; font-weight: bold;">جاري تحضير الطلب...</span>
+    <section class="menu-categories" id="menu-cats">
+        <div class="section-header">
+            <h2>قائمة الطعام</h2>
         </div>
+        <div class="category-grid">
+            <div class="category-item" onclick="toggleMenu('shawarma-section')">
+                <div class="click-overlay">اضغط لعرض المنيو</div>
+                <img src="https://i.ibb.co/G3NMm6sn/image.jpg" alt="Shawarma">
+                <div class="category-info"><h4>شاورما - Shawarma</h4><span>أصناف الوجبات والسندويشات</span></div>
+            </div>
+            <div class="category-item" onclick="toggleMenu('western-section')">
+                <div class="click-overlay">اضغط لعرض المنيو</div>
+                <img src="https://i.ibb.co/mrS7QCvy/image.jpg" alt="Western">
+                <div class="category-info"><h4>غربي - Western</h4><span>سندويشات ووجبات الدجاج</span></div>
+            </div>
+            <div class="category-item" onclick="toggleMenu('burger-section')">
+                <div class="click-overlay">اضغط لعرض المنيو</div>
+                <img src="https://i.ibb.co/mr47C1h5/image.jpg" alt="Burger">
+                <div class="category-info"><h4>برغر - Burger</h4><span>لحم ودجاج</span></div>
+            </div>
+            <div class="category-item" onclick="toggleMenu('broasted-section')">
+                <div class="click-overlay">اضغط لعرض المنيو</div>
+                <img src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=500&q=80" alt="Broasted">
+                <div class="category-info"><h4>بروستد - Broasted</h4><span>فروج عادي وحار</span></div>
+            </div>
+            <div class="category-item" onclick="toggleMenu('monday-section')">
+                <div class="click-overlay">اضغط لعرض المنيو</div>
+                <img src="https://i.ibb.co/mrS7QCvy/image.jpg" alt="Monday">
+                <div class="category-info"><h4>الإثنين - Monday</h4><span>أصناف اللحم الخاصة</span></div>
+            </div>
+            <div class="category-item" onclick="toggleMenu('appetizers-section')">
+                <div class="click-overlay">اضغط لعرض المنيو</div>
+                <img src="https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=500&q=80" alt="Appetizers">
+                <div class="category-info"><h4>مقبلات - Appetizers</h4><span>مقبلات وإضافات</span></div>
+            </div>
+            <div class="category-item" onclick="toggleMenu('drinks-section')">
+                <div class="click-overlay">اضغط لعرض المنيو</div>
+                <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=500&q=80" alt="Drinks">
+                <div class="category-info"><h4>مشروبات - Drinks</h4><span>مشروبات باردة</span></div>
+            </div>
+        </div>
+    </section>
 
-        <button class="btn-gold" style="background:var(--purple); color:#fff; height: 45px; border: 1px solid var(--gold);" onclick="openConfirmModal()">أدخل الكود (تم التسليم) ✅</button>
-    </div>
+    <section class="detailed-menu" id="shawarma-section">
+        <div class="menu-list">
+            <div class="menu-column">
+                <h3>وجبات الشاورما المميزة</h3>
+                <div class="menu-item"><span class="name">وجبة شاورما شباب (6 سندويشات مقطعة)</span><span class="price">190,000 SYP</span></div>
+                <div class="menu-item"><span class="name">وجبة شاورما صبايا (عربي + كريم)</span><span class="price">160,000 SYP</span></div>
+                <div class="menu-item"><span class="name">وجبة شاورما إيطالي</span><span class="price">70,000 SYP</span></div>
+                <div class="menu-item"><span class="name">وجبة شاورما حلبية</span><span class="price">65,000 SYP</span></div>
+                <div class="menu-item"><span class="name">وجبة شاورما ذا هوك</span><span class="price">65,000 SYP</span></div>
+                <div class="menu-item"><span class="name">وجبة شاورما فرنسي</span><span class="price">55,000 SYP</span></div>
+                <div class="menu-item"><span class="name">وجبة شاورما بانيه</span><span class="price">45,000 SYP</span></div>
+                <div class="menu-item"><span class="name">وجبة شاورما عربي</span><span class="price">حسب التخصيص</span></div>
+                <div class="menu-item"><span class="name">وجبة شاورما دبل</span><span class="price">حسب التخصيص</span></div>
+            </div>
+            <div class="menu-column">
+                <h3>السندويشات والطوشكا</h3>
+                <div class="menu-item"><span class="name">طوشكا شاورما جبنة</span><span class="price">65,000 SYP</span></div>
+                <div class="menu-item"><span class="name">طوشكا شاورما خضار</span><span class="price">60,000 SYP</span></div>
+                <div class="menu-item"><span class="name">سندويش شاورما فرنسي</span><span class="price">35,000 SYP</span></div>
+                <div class="menu-item"><span class="name">سندويش شاورما صاروخ</span><span class="price">30,000 SYP</span></div>
+                <div class="menu-item"><span class="name">شاورما بيرق دجاج</span><span class="price">14,000 SYP</span></div>
+                <div class="menu-item"><span class="name">سندويش شاورما عادي</span><span class="price">حسب التخصيص</span></div>
+            </div>
+        </div>
+    </section>
 
-    <div class="tab-bar" id="main-tabs" style="display: none;">
-        <div class="tab-item active" id="t-main" onclick="nav('p-main')"><i class="fas fa-search-location"></i>الطلبات</div>
-        <div class="tab-item" id="t-active" onclick="checkActiveAndNav()"><i class="fas fa-box-open"></i>مستلمة</div>
-        <div class="tab-item" id="t-wallet" onclick="nav('p-wallet')"><i class="fas fa-wallet"></i>المحفظة</div>
-        <div class="tab-item" id="t-history" onclick="nav('p-finance-history')"><i class="fas fa-file-invoice-dollar"></i>الدفعات</div>
-        <div class="tab-item" id="t-profile" onclick="nav('p-profile')"><i class="fas fa-user-tie"></i>حسابي</div>
-    </div>
-</div>
+    <section class="detailed-menu" id="western-section">
+        <div class="menu-list">
+            <div class="menu-column">
+                <h3>وجبات الدجاج</h3>
+                <div class="menu-item"><span class="name">وجبة زنجر ذا هوك</span><span class="price">75,000 SYP</span></div>
+                <div class="menu-item"><span class="name">وجبة فاهيتا</span><span class="price">58,000 SYP</span></div>
+                <div class="menu-item"><span class="name">وجبة شيش</span><span class="price">55,000 SYP</span></div>
+                <div class="menu-item"><span class="name">وجبة روليكس (رول مع كريسبي)</span><span class="price">45,000 SYP</span></div>
+            </div>
+            <div class="menu-column">
+                <h3>السندويشات</h3>
+                <div class="menu-item"><span class="name">سندويش زنجر ذا هوك</span><span class="price">38,000 SYP</span></div>
+                <div class="menu-item"><span class="name">سندويشة مكسيكانو</span><span class="price">35,000 SYP</span></div>
+                <div class="menu-item"><span class="name">فاهيتا / زنجر / كريزي كريسبي</span><span class="price">35,000 SYP</span></div>
+                <div class="menu-item"><span class="name">سبايسي / كريسبي / شيش</span><span class="price">32,000 SYP</span></div>
+                <div class="menu-item"><span class="name">سندويش بطاطا / بطاطا تشيز</span><span class="price">حسب التخصيص</span></div>
+            </div>
+        </div>
+    </section>
 
-<script>
-    const supabaseUrl = 'https://ricoslplbhphydhtrufe.supabase.co';
-    const supabaseKey = 'sb_publishable_k6LgEuwPLdCsBMCFC12wfQ_BSOJotuw';
-    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+    <section class="detailed-menu" id="burger-section">
+        <div class="menu-list">
+            <div class="menu-column">
+                <h3>برغر لحم</h3>
+                <div class="menu-item"><span class="name">برغر لحم (ذا هوك)</span><span class="price">55,000 SYP</span></div>
+                <div class="menu-item"><span class="name">برغر لحم سويس ومشروم</span><span class="price">55,000 SYP</span></div>
+                <div class="menu-item"><span class="name">برغر لحم بيكن</span><span class="price">55,000 SYP</span></div>
+                <div class="menu-item"><span class="name">برغر لحم كلاسيك</span><span class="price">52,000 SYP</span></div>
+            </div>
+            <div class="menu-column">
+                <h3>برغر دجاج</h3>
+                <div class="menu-item"><span class="name">برغر دجاج سموكي تشيز</span><span class="price">40,000 SYP</span></div>
+                <div class="menu-item"><span class="name">برغر دجاج كرانش</span><span class="price">37,000 SYP</span></div>
+                <div class="menu-item"><span class="name">برغر دجاج كلاسيك</span><span class="price">35,000 SYP</span></div>
+            </div>
+        </div>
+    </section>
 
-    let currentOrderID = null;
-    let gpsWatch = null;
-    let orderCount = 0;
-    let currentUserData = null;
-    let settlementTimer = null;
-    let refreshProgress = 0;
-    let refreshInterval = null;
-    let settlementCounter = 15;
-    let settlementProgressInterval = null;
+    <section class="detailed-menu" id="broasted-section">
+        <div class="menu-list">
+            <div class="menu-column">
+                <h3>قسم البروستد</h3>
+                <div class="menu-item"><span class="name">فروج بروستد عادي</span><span class="price">حسب التخصيص</span></div>
+                <div class="menu-item"><span class="name">فروج بروستد حار</span><span class="price">حسب التخصيص</span></div>
+            </div>
+        </div>
+    </section>
 
-    function siteNotify(msg) {
-        const n = document.getElementById('site-notify');
-        n.innerText = msg;
-        n.classList.add('show');
-        setTimeout(() => n.classList.remove('show'), 3500);
-    }
+    <section class="detailed-menu" id="monday-section">
+        <div class="menu-list">
+            <div class="menu-column">
+                <h3>يوم الإثنين فقط</h3>
+                <div class="menu-item"><span class="name">شاورما لحم بيرق</span><span class="price">25,000 SYP</span></div>
+                <div class="menu-item"><span class="name">لحم بالوزن / وجبة لحم / سندويش لحم</span><span class="price">حسب التخصيص</span></div>
+            </div>
+        </div>
+    </section>
 
-    function openAdminChat() {
-        const name = currentUserData ? (currentUserData.name || 'غير معروف') : 'صقر شاهين';
-        let orderContext = currentOrderID ? `عندي مشكلة في الطلب رقم #${currentOrderID}` : "عندي مشكلة وأرجو الرد";
-        const msg = encodeURIComponent(`مرحبا إدارة صقور شاهين، معكم المندوب: ${name}. ${orderContext} 🦅`);
-        window.open(`https://wa.me/966546083283?text=${msg}`);
-    }
+    <section class="detailed-menu" id="appetizers-section">
+        <div class="menu-list">
+            <div class="menu-column">
+                <h3>المقبلات والإضافات</h3>
+                <div class="menu-item"><span class="name">ربطة خبز سياحي</span><span class="price">11,000 SYP</span></div>
+                <div class="menu-item"><span class="name">صحن سرفيس</span><span class="price">10,000 SYP</span></div>
+                <div class="menu-item"><span class="name">علبة مخلل / علبة ثوم / صوص شيدر</span><span class="price">5,000 SYP</span></div>
+                <div class="menu-item"><span class="name">علبة سلطة روسية</span><span class="price">4,000 SYP</span></div>
+                <div class="menu-item"><span class="name">علبة شطة / علبة دبس</span><span class="price">2,500 SYP</span></div>
+            </div>
+        </div>
+    </section>
 
-    async function toggleWorkStatus(status) {
-        if (!currentUserData) return;
-        const statusText = status ? 'online' : 'offline';
-        localStorage.setItem('shaheen_work_status', statusText);
-        if(document.getElementById('work-status-checkbox')) document.getElementById('work-status-checkbox').checked = status;
-        if(document.getElementById('main-work-status-checkbox')) document.getElementById('main-work-status-checkbox').checked = status;
-        
-        await supabaseClient.from('sh_admin_tracking').upsert({ id: currentUserData.id, status: statusText });
-        if (!status) { if(gpsWatch) navigator.geolocation.clearWatch(gpsWatch); gpsWatch = null; }
-        if (status) startAdminTracking();
-        siteNotify(status ? "أنت الآن متاح لاستقبال الطلبات 🦅" : "تم إيقاف استقبال الطلبات حالياً");
-        refreshOrders(); 
-    }
+    <section class="detailed-menu" id="drinks-section">
+        <div class="menu-list">
+            <div class="menu-column">
+                <h3>المشروبات والغازيات</h3>
+                <div class="menu-item"><span class="name">عبوات عائلية (بيبسي / تفاح)</span><span class="price">17,000 SYP</span></div>
+                <div class="menu-item"><span class="name">عبوات عائلية (كوكا كولا / فينيتا)</span><span class="price">14,000 SYP</span></div>
+                <div class="menu-item"><span class="name">عبوات لتر (بيبسي / سفن / ميراندا / تفاح / سبيريت)</span><span class="price">10,000 SYP</span></div>
+                <div class="menu-item"><span class="name">بيبسي تنك كبيرة / زويا بلور</span><span class="price">7,000 SYP</span></div>
+                <div class="menu-item"><span class="name">كولا طبوش / لبن عيران / مياه كبيرة / ماتريكس</span><span class="price">5,000 SYP</span></div>
+                <div class="menu-item"><span class="name">بيبسي تنك صغيرة / مياه صغيرة</span><span class="price">3,000 SYP</span></div>
+            </div>
+        </div>
+    </section>
 
-    function closeAdminAlert() {
-        document.getElementById('admin-alert-modal').style.display = 'none';
-    }
+    <section class="working-hours">
+        <div class="section-header">
+            <h2>أوقات الدوام</h2>
+        </div>
+        <div class="hours-grid">
+            <div class="hour-card"><span class="hour-day">الأحد</span><span>٩:٠٠ ص – ٣:٠٠ ص</span></div>
+            <div class="hour-card"><span class="hour-day">الاثنين</span><span>٩:٠٠ ص – ٣:٠٠ ص</span></div>
+            <div class="hour-card"><span class="hour-day">الثلاثاء</span><span>٩:٠٠ ص – ٣:٠٠ ص</span></div>
+            <div class="hour-card"><span class="hour-day">الأربعاء</span><span>٩:٠٠ ص – ٣:٠٠ ص</span></div>
+            <div class="hour-card"><span class="hour-day">الخميس</span><span>٩:٠٠ ص – ٣:٠٠ ص</span></div>
+            <div class="hour-card"><span class="hour-day">الجمعة</span><span>٩:٠٠ ص – ٣:٠٠ ص</span></div>
+            <div class="hour-card"><span class="hour-day">السبت</span><span>٩:٠٠ ص – ٣:٠٠ ص</span></div>
+        </div>
+    </section>
 
-    async function login() {
-        const email = document.getElementById('auth-email').value.trim().toLowerCase();
-        const code = document.getElementById('auth-code').value.trim();
-        const btn = document.getElementById('login-btn');
+    <section class="gallery" id="gallery">
+        <div class="section-header">
+            <h2>معرض الصور</h2>
+        </div>
+        <div class="insta-grid">
+            <div class="insta-item"><img src="https://i.ibb.co/G3NMm6sn/image.jpg" alt="Dish 1"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/mrS7QCvy/image.jpg" alt="Dish 2"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/mr47C1h5/image.jpg" alt="Dish 3"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/G3NMm6sn/image.jpg" alt="Dish 4"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/mrS7QCvy/image.jpg" alt="Dish 5"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/mr47C1h5/image.jpg" alt="Dish 6"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/FqNmJ354/image.jpg" alt="Dish 7"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/zVS7J2S6/image.jpg" alt="Dish 8"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/pBbzZmxY/image.jpg" alt="Dish 9"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/ynK030cb/image.jpg" alt="Dish 10"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/hRmPNTGk/image.jpg" alt="Dish 11"></div>
+        </div>
+    </section>
 
-        if(!code || !email) { siteNotify("الرجاء إدخل الإيميل وكود التفعيل يا صقر"); return; }
-        btn.disabled = true; btn.innerText = "جاري التحقق...";
+    <footer id="contact">
+        <h2 style="margin-bottom: 30px; color: var(--primary-color);">تواصل معنا للطلب</h2>
+        <div class="contact-container">
+            <a href="https://wa.me/963932221340" target="_blank" class="contact-box">
+                <i class="fab fa-whatsapp"></i>
+                <span>0932221340</span>
+            </a>
+            <a href="https://wa.me/963945695694" target="_blank" class="contact-box">
+                <i class="fab fa-whatsapp"></i>
+                <span>0945695694</span>
+            </a>
+            <a href="tel:0132535511" class="contact-box">
+                <i class="fas fa-phone"></i>
+                <span>0132535511</span>
+            </a>
+            <a href="https://maps.google.com/?q=35.1311,36.7578" target="_blank" class="contact-box">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>موقعنا على الخريطة</span>
+            </a>
+        </div>
+        <div class="social-links">
+            <a href="https://instagram.com/thehookresturant" target="_blank"><i class="fab fa-instagram"></i> انستقرام</a>
+            <a href="https://www.facebook.com/share/1XDJZ7F8du/?mibextid=wwXIfr" target="_blank"><i class="fab fa-facebook"></i> فيسبوك</a>
+        </div>
+        <p style="font-size: 0.9rem; color: #888;">سوريا - حماة - حي الغرب / الشريعة</p>
+        <p style="margin-top: 15px; font-size: 0.8rem; color: #555;">جميع الحقوق محفوظة © مطعم ذا هوك 2026</p>
+    </footer>
 
-        const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: code
+    <script>
+        function toggleMenu(id) {
+            document.querySelectorAll('.detailed-menu').forEach(sec => {
+                if(sec.id !== id) sec.style.display = 'none';
+            });
+            const menu = document.getElementById(id);
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+            if(menu.style.display === 'block') menu.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        window.addEventListener('scroll', function() {
+            const nav = document.getElementById('main-nav');
+            if (window.scrollY > 100) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
         });
-
-        if (authError) {
-            let errorMsg = authError.message;
-            if (errorMsg.includes("Email not confirmed")) {
-                errorMsg = "حسابك يحتاج تفعيل من الإدارة. يرجى التواصل مع المدير فوراً 🦅";
-            } else if (errorMsg === "Invalid login credentials") {
-                errorMsg = "تأكد من الإيميل والكود بشكل صحيح 🦅";
-            }
-            siteNotify("فشل الدخول: " + errorMsg);
-            btn.disabled = false; btn.innerText = "دخول النظام";
-            return;
-        }
-
-        const { data: driverInfo, error: dbError } = await supabaseClient
-            .from('drivers')
-            .select('*')
-            .eq('id', authData.user.id)
-            .single();
-
-        if (dbError || !driverInfo) {
-            siteNotify("لم يتم العثور على ملف الصقر في سجلات الإدارة");
-            btn.disabled = false; btn.innerText = "دخول النظام";
-            return;
-        }
-
-        if (driverInfo.status !== 'active') {
-            document.getElementById('suspend-msg').innerText = "حسابك غير نشط حالياً، راجع الإدارة";
-            document.getElementById('suspend-modal').style.display = 'flex';
-            btn.disabled = false; btn.innerText = "دخول النظام";
-            return;
-        }
-
-        currentUserData = { ...authData.user, ...driverInfo };
-        localStorage.setItem('shaheen_driver', JSON.stringify(currentUserData));
-        siteNotify("تم تسجيل الدخول بنجاح! 🦅");
-        initSystem();
-    }
-
-    async function initSystem() {
-        const saved = localStorage.getItem('shaheen_driver');
-        if(saved) {
-            currentUserData = JSON.parse(saved);
-            
-            supabaseClient
-                .channel('driver-status-check')
-                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'drivers', filter: `id=eq.${currentUserData.id}` }, payload => {
-                    if (payload.new.status !== 'active') {
-                        document.getElementById('suspend-msg').innerText = "تم إيقاف حسابك من قبل الإدارة";
-                        document.getElementById('suspend-modal').style.display = 'flex';
-                        localStorage.removeItem('shaheen_driver');
-                    } else {
-                        document.getElementById('suspend-modal').style.display = 'none';
-                        currentUserData = { ...currentUserData, ...payload.new };
-                        localStorage.setItem('shaheen_driver', JSON.stringify(currentUserData));
-                        updateWalletUI();
-                        calculateWeeklyRating();
-                        document.getElementById('wallet-positive-rect').classList.remove('blurred-profit');
-                    }
-                })
-                .subscribe();
-
-            supabaseClient.removeChannel(supabaseClient.channel('public_orders_realtime'));
-            supabaseClient
-                .channel('public_orders_realtime')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'sh_public_orders' }, payload => {
-                    if(payload.new.status === 'searching' || payload.new.status === 'pending') {
-                        siteNotify("🦅 صيد جديد! طلب من " + (payload.new.res || payload.new.res_name));
-                        refreshOrders(); 
-                    }
-                })
-                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'sh_public_orders' }, payload => {
-                    if(payload.new.id === currentOrderID && (payload.new.status === 'cancelled' || payload.new.status === 'completed')) {
-                        currentOrderID = null;
-                        localStorage.removeItem('active_order_id');
-                        nav('p-main');
-                    }
-                    if(payload.new.id === currentOrderID && payload.new.restaurant_note) {
-                        const noteBox = document.getElementById('res-status-notification');
-                        const noteText = document.getElementById('res-status-text');
-                        if(noteBox && noteText) {
-                            noteBox.style.display = 'block';
-                            noteText.innerText = payload.new.restaurant_note;
-                        }
-                    }
-                    refreshOrders();
-                })
-                .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'sh_public_orders' }, payload => {
-                    if(payload.old && payload.old.id === currentOrderID) {
-                        currentOrderID = null;
-                        localStorage.removeItem('active_order_id');
-                        siteNotify("الطلب لم يعد متاحاً (تم الإلغاء)");
-                        nav('p-main');
-                    }
-                    refreshOrders();
-                })
-                .subscribe();
-
-            document.getElementById('p-auth').classList.remove('active');
-            document.getElementById('main-tabs').style.display = 'flex';
-            document.getElementById('profile-name').innerText = currentUserData.name || "صقر شاهين";
-            document.getElementById('admin-driver-id').innerText = currentUserData.id.substring(0, 8).toUpperCase();
-            
-            const { count: completedCount } = await supabaseClient.from('sh_public_orders').select('*', { count: 'exact', head: true }).eq('driver_id', currentUserData.id).eq('status', 'completed');
-            orderCount = completedCount || 0;
-            document.getElementById('total-orders-count').innerText = orderCount;
-            
-            if(currentUserData.image_url) { document.getElementById('driver-img-display').src = currentUserData.image_url; }
-
-            updateWalletUI();
-            calculateWeeklyRating();
-
-            const savedOrderID = localStorage.getItem('active_order_id');
-            const { data: activeOrder } = await supabaseClient.from('sh_public_orders')
-                .select('*').eq('driver_id', currentUserData.id).in('status', ['accepted', 'picked', 'preparing', 'ready']).maybeSingle();
-            
-            if(activeOrder) {
-                currentOrderID = activeOrder.id;
-                localStorage.setItem('active_order_id', activeOrder.id);
-                reconnectActiveOrder(activeOrder.id);
-                nav('p-active-order');
-            } else if (savedOrderID) {
-                const { data: reCheck } = await supabaseClient.from('sh_public_orders').select('*').eq('id', savedOrderID).maybeSingle();
-                if(reCheck && ['accepted', 'picked', 'preparing', 'ready'].includes(reCheck.status)) {
-                    currentOrderID = reCheck.id;
-                    reconnectActiveOrder(reCheck.id);
-                    nav('p-active-order');
-                } else {
-                    currentOrderID = null;
-                    localStorage.removeItem('active_order_id');
-                    nav('p-main');
-                }
-            } else {
-                currentOrderID = null;
-                localStorage.removeItem('active_order_id');
-                nav('p-main');
-            }
-            startRefreshTimer();
-
-            const savedStatus = localStorage.getItem('shaheen_work_status');
-            if (savedStatus === 'online') {
-                if(document.getElementById('work-status-checkbox')) document.getElementById('work-status-checkbox').checked = true;
-                if(document.getElementById('main-work-status-checkbox')) document.getElementById('main-work-status-checkbox').checked = true;
-                startAdminTracking();
-            } else {
-                if(document.getElementById('work-status-checkbox')) document.getElementById('work-status-checkbox').checked = false;
-                if(document.getElementById('main-work-status-checkbox')) document.getElementById('main-work-status-checkbox').checked = false;
-                await supabaseClient.from('sh_admin_tracking').upsert({ id: currentUserData.id, status: 'offline' });
-            }
-            refreshOrders();
-        }
-    }
-
-    async function calculateWeeklyRating() {
-        if (!currentUserData) return;
-        const oneWeekAgo = new Date(); oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        const { data: orders } = await supabaseClient.from('orders').select('driver_rating').eq('driver_id', currentUserData.id).gte('created_at', oneWeekAgo.toISOString());
-        if (orders && orders.length > 0) {
-            const counts = {}; let maxRating = 5.0; let maxCount = 0;
-            orders.forEach(o => { if(o.driver_rating) { counts[o.driver_rating] = (counts[o.driver_rating] || 0) + 1; } });
-            for (let r in counts) { if (counts[r] >= maxCount) { maxCount = counts[r]; maxRating = r; } }
-            document.getElementById('driver-rating-val').innerText = parseFloat(maxRating).toFixed(1);
-            const stars = document.getElementById('rating-stars'); stars.innerHTML = "";
-            for (let i = 1; i <= 5; i++) { stars.innerHTML += `<i class="${i <= Math.round(maxRating) ? 'fas' : 'far'} fa-star"></i>`; }
-        } else {
-            document.getElementById('driver-rating-val').innerText = "5.0";
-            document.getElementById('rating-stars').innerHTML = `<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>`;
-        }
-    }
-
-    async function updateWalletUI() {
-        if (!currentUserData) return;
-        
-        const { data: ledgerData } = await supabaseClient.from('ledger').select('*').eq('driver_id', currentUserData.id);
-        const { count: completedCount } = await supabaseClient.from('sh_public_orders').select('*', { count: 'exact', head: true }).eq('driver_id', currentUserData.id).eq('status', 'completed');
-        
-        let netProfit = 0; let companyGreen = 0; let companyRed = 0;
-        
-        if(ledgerData) {
-            let totalRunningBalance = 0;
-            ledgerData.forEach(item => {
-                netProfit += parseFloat(item.driver_share) || 0;
-                totalRunningBalance += (parseFloat(item.company_profit) || 0) - (parseFloat(item.discount) || 0);
-            });
-            if (totalRunningBalance > 0) companyGreen = totalRunningBalance;
-            else companyRed = Math.abs(totalRunningBalance);
-        }
-        
-        document.getElementById('today-profit').innerText = netProfit.toLocaleString() + " ل.س";
-        document.getElementById('company-profit-rect').innerText = (companyGreen).toLocaleString();
-        document.getElementById('company-debt-rect').innerText = (companyRed).toLocaleString();
-        document.getElementById('total-orders-count').innerText = completedCount || 0;
-    }
-
-    function startRefreshTimer() {
-        if(refreshInterval) clearInterval(refreshInterval);
-        refreshInterval = setInterval(() => {
-            refreshProgress += 1;
-            if(document.getElementById('refresh-bar')) document.getElementById('refresh-bar').style.width = (refreshProgress / 150) * 100 + "%";
-            if(refreshProgress >= 150) { 
-                refreshProgress = 0;
-                refreshOrders();
-            }
-        }, 100);
-    }
-
-    async function loadOrderHistory() {
-        if(!currentUserData) return;
-        const { data } = await supabaseClient.from('sh_public_orders').select('*').eq('driver_id', currentUserData.id).eq('status', 'completed');
-        const hList = document.getElementById('transactions-list');
-        hList.innerHTML = "";
-        if(data) {
-            data.reverse().forEach(o => {
-                hList.innerHTML += `<div class="history-item">#${o.id} | ${o.res || o.res_name} - ${o.total} ل.س</div>`;
-            });
-        }
-    }
-
-    async function refreshOrders() {
-        refreshProgress = 0;
-        const list = document.getElementById('orders-list');
-        
-        const isOnline = localStorage.getItem('shaheen_work_status') === 'online';
-        if(!isOnline) { list.innerHTML = "<div style='text-align:center; color:#888; margin-top:50px;'><i class='fas fa-toggle-off' style='font-size:30px; display:block; margin-bottom:10px;'></i> شغل (حالة استقبال الطلبات) لتبدأ بالصيد يا صقر 🦅</div>"; return; }
-
-        if(currentOrderID) {
-            const { data: checkActive } = await supabaseClient.from('sh_public_orders').select('status').eq('id', currentOrderID).maybeSingle();
-            if(!checkActive || !['accepted', 'picked', 'preparing', 'ready'].includes(checkActive.status)) {
-                currentOrderID = null;
-                localStorage.removeItem('active_order_id');
-            } else {
-                list.innerHTML = "<div style='text-align:center; color:var(--gold); margin-top:50px; padding:20px; background:rgba(212,175,55,0.05); border-radius:15px;'><i class='fas fa-lock' style='font-size:30px; margin-bottom:10px;'></i><br>أكمل طلبك الحالي يا صقر لتتمكن من قنص طلبات جديدة 🦅</div>";
-                return;
-            }
-        }
-
-        const { data, error } = await supabaseClient.from('sh_public_orders').select('*').in('status', ['searching', 'pending', 'accepted', 'preparing', 'ready', 'picked']).order('created_at', { ascending: false });
-        list.innerHTML = "";
-        
-        if(error) {
-            list.innerHTML = "<div style='text-align:center; color:#e74c3c; margin-top:50px;'>حدث خطأ أثناء جلب الطلبات، تأكد من اتصالك</div>";
-            return;
-        }
-
-        if(data && data.length > 0) {
-            const uniqueOrders = [];
-            const seenCustomers = new Set();
-            const now = new Date();
-            data.forEach(o => {
-                const orderTime = new Date(o.created_at);
-                const diff = now - orderTime;
-                if (!seenCustomers.has(o.customer_id) && diff <= 3600000) {
-                    uniqueOrders.push(o);
-                    seenCustomers.add(o.customer_id);
-                }
-            });
-            uniqueOrders.forEach(o => {
-                let itemsList = "";
-                try {
-                   const itemsArr = JSON.parse(o.items || "[]");
-                   itemsList = itemsArr.map(i => `<span style="display:block; font-size:10px; color:#aaa;">- ${i.n}</span>`).join('');
-                } catch(e) { itemsList = ""; }
-
-                list.innerHTML += `
-                    <div class="card" style="border-right: 4px solid var(--gold); padding: 10px;">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
-                            <div>
-                                <small style="display:block; color:var(--gold); font-weight:bold; font-size:10px; margin-bottom:2px;">#${o.id}</small>
-                                <b style="color:var(--gold); font-size:13px;">${o.res || o.res_name || 'طلب شاهين'}</b>
-                                <small style="display:block; color:#eee; font-size:10px; margin-top:2px;">📍 ${o.res_address || 'المطعم'}</small>
-                                <small style="display:block; color:#eee; font-size:10px; margin-top:2px;">🏠 ${o.customer_address || 'العميل'}</small>
-                            </div>
-                            <div style="text-align:left;">
-                                <b style="color:#fff; display:block; font-size:12px;">${o.total.toLocaleString()} ل.س</b>
-                                <small style="color:var(--gold); font-size:9px; font-weight:bold;">التوصيل: ${o.delivery_price || 0}</small>
-                            </div>
-                        </div>
-                        <div style="background:rgba(0,0,0,0.2); padding:6px; border-radius:10px; margin-bottom:8px; border:1px solid rgba(212, 175, 55, 0.1);">
-                            ${itemsList || '<small style="color:#666; font-size:9px;">لا توجد تفاصيل</small>'}
-                        </div>
-                        <button class="btn-gold" onclick="acceptOrder('${o.id}', '${o.res || o.res_name}')"><i class="fas fa-bolt"></i> قنص الطلب 🦅</button>
-                    </div>`;
-            });
-        } else {
-            list.innerHTML = "<div style='text-align:center; color:#555; margin-top:50px;'><i class='fas fa-info-circle' style='font-size:30px; display:block; margin-bottom:10px;'></i> لا يوجد طلبات متاحة حالياً.. ابقَ متيقظاً يا صقر 🦅</div>";
-        }
-    }
-
-    async function acceptOrder(id, restaurantName) {
-        if(currentOrderID) return siteNotify("أنهِ الطلب الحالي أولاً يا صقر! 🦅");
-        const { data: orderToCheck } = await supabaseClient.from('sh_public_orders').select('status').eq('id', id).single();
-        if(orderToCheck && orderToCheck.status !== 'searching' && orderToCheck.status !== 'pending') { siteNotify("للأسف! سبقك أحد الصقور وقنص الطلب 🦅"); refreshOrders(); return; }
-        
-        const driverName = currentUserData.name || "صقر شاهين";
-        const driverPhone = currentUserData.phone || "00000000";
-
-        const { error: error1 } = await supabaseClient.from('sh_public_orders').update({ 
-            status: 'accepted', 
-            driver_id: currentUserData.id, 
-            driver_phone: driverPhone,
-            driver_name: driverName,
-            restaurant_name: restaurantName 
-        }).eq('id', id);
-        
-        const { error: error2 } = await supabaseClient.from('orders').update({ 
-            status: 'accepted', 
-            driver_id: currentUserData.id, 
-            driver_phone: driverPhone,
-            driver_name: driverName,
-            restaurant_name: restaurantName 
-        }).eq('id', id);
-
-        if(!error1 && !error2) {
-            currentOrderID = id;
-            localStorage.setItem('active_order_id', id);
-            await reconnectActiveOrder(id);
-            initSystem(); 
-            nav('p-active-order');
-            refreshOrders();
-            siteNotify("تم قنص الطلب بنجاح! توجه للمطعم الآن 🦅");
-        } else {
-            const errMsg = error1?.message || error2?.message || "فشل القنص";
-            siteNotify("فشل القنص: " + errMsg);
-        }
-    }
-
-    async function cancelOrder() {
-        if(!currentOrderID) return;
-        siteNotify("الإلغاء من قبل المندوب غير متاح، يرجى التواصل مع الإدارة 🦅");
-    }
-
-    async function cancelOrderByDriver() {
-        if(!currentOrderID) return;
-        siteNotify("عذراً، لا يمكنك حذف الطلبية التي قمت بقنصها يا صقر ❌");
-    }
-
-    function nav(id) {
-        if(!currentUserData && id !== 'p-auth') return;
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-        if(id === 'p-main') { 
-            if(document.getElementById('t-main')) document.getElementById('t-main').classList.add('active'); 
-            refreshOrders(); 
-        }
-        if(id === 'p-active-order') {
-            if(document.getElementById('t-active')) document.getElementById('t-active').classList.add('active');
-        }
-        if(id === 'p-wallet') { 
-            if(document.getElementById('t-wallet')) document.getElementById('t-wallet').classList.add('active'); 
-            loadOrderHistory(); updateWalletUI(); 
-        }
-        if(id === 'p-profile') { 
-            if(document.getElementById('t-profile')) document.getElementById('t-profile').classList.add('active'); 
-            updateWalletUI(); 
-        }
-        if(id === 'p-finance-history') { 
-            if(document.getElementById('t-history')) document.getElementById('t-history').classList.add('active'); 
-            loadPaymentHistoryUI(); 
-        }
-    }
-
-    async function startAdminTracking() {
-        if (!currentUserData) return;
-        if (navigator.geolocation) {
-            gpsWatch = navigator.geolocation.watchPosition(async pos => {
-                await supabaseClient.from('sh_admin_tracking').upsert({
-                    id: currentUserData.id,
-                    lat: pos.coords.latitude,
-                    lng: pos.coords.longitude,
-                    last_seen: new Date().toISOString(),
-                    name: currentUserData.name
-                });
-            });
-        }
-    }
-
-    async function generateSettlementCode() {
-        if (settlementTimer) return;
-        const randomCode = Math.floor(1000 + Math.random() * 9000);
-        
-        const { error } = await supabaseClient.from('drivers').update({ activation_code: String(randomCode) }).eq('id', currentUserData.id);
-        if (error) { siteNotify("فشل توليد كود التحقق"); return; }
-
-        document.getElementById('current-settlement-code').innerText = randomCode;
-        document.getElementById('settlement-code-display').style.display = 'block';
-        document.getElementById('settlement-timer-bar-container').style.display = 'block';
-        settlementCounter = 15;
-        document.getElementById('settlement-timer-bar').style.width = '100%';
-        settlementTimer = setInterval(() => {
-            settlementCounter--;
-            document.getElementById('settlement-timer-bar').style.width = (settlementCounter / 15) * 100 + '%';
-            if (settlementCounter <= 0) {
-                clearInterval(settlementTimer);
-                settlementTimer = null;
-                document.getElementById('settlement-code-display').style.display = 'none';
-            }
-        }, 1000);
-    }
-    
-    function requestPersonalSettlement() { siteNotify("يرجى إبراز كود التصفية للمدير لإتمام العملية نقداً"); }
-    
-    async function logout() {
-        if(confirm("هل تريد تسجيل الخروج يا صقر؟ لن يضيع طلبك المستلم 🦅")) {
-            await supabaseClient.auth.signOut();
-            localStorage.removeItem('shaheen_driver');
-            localStorage.removeItem('shaheen_work_status');
-            location.reload();
-        }
-    }
-
-    async function openConfirmModal() {
-        if(!currentOrderID) return;
-        const { data: order } = await supabaseClient.from('sh_public_orders').select('total').eq('id', currentOrderID).single();
-        if(order) {
-            document.getElementById('cash-to-receive-display').innerText = `المبلغ المطلوب استلامه نقداً: ${order.total.toLocaleString()} ل.س`;
-        }
-        document.getElementById('confirm-modal').classList.add('active');
-    }
-
-    function closeConfirmModal() {
-        document.getElementById('confirm-modal').classList.remove('active');
-        document.getElementById('delivery-verify-code').value = "";
-    }
-
-    async function executeFinishOrder() {
-        const inputCodeField = document.getElementById('delivery-verify-code');
-        const inputCode = inputCodeField.value.trim();
-        const btn = document.getElementById('btn-confirm-delivery');
-        if(!inputCode) { siteNotify("يرجى إدخل كود التحقق من العميل"); return; }
-        btn.disabled = true;
-        btn.innerText = "جاري التسجيل...";
-        try {
-            const { data: order, error: fetchErr } = await supabaseClient.from('sh_public_orders').select('*').eq('id', currentOrderID).single();
-            if(fetchErr || !order) throw new Error("لم يتم العثور على الطلب");
-            if(order.verify_code != inputCode) {
-                siteNotify("كود التحقق غير صحيح! تأكد من العميل");
-                btn.disabled = false; btn.innerText = "نعم، قبضت";
-                return;
-            }
-            const deliveryPrice = parseFloat(order.delivery_price) || 0; 
-            const totalDiscount = parseFloat(order.discount) || 0; 
-            const totalCashToReceive = parseFloat(order.total) || 0;
-            const companyRatePercent = 0.20; 
-            const driverRatePercent = 0.80;
-            let currentOrderCompanyProfit = deliveryPrice * companyRatePercent; 
-            let currentOrderDriverShare = deliveryPrice * driverRatePercent; 
-            const { data: ledgerHistory } = await supabaseClient.from('ledger').select('company_profit, discount').eq('driver_id', currentUserData.id);
-            let totalOldCompanyBalance = 0;
-            if(ledgerHistory) {
-                totalOldCompanyBalance = ledgerHistory.reduce((acc, curr) => acc + (parseFloat(curr.company_profit) || 0) - (parseFloat(curr.discount) || 0), 0);
-            }
-            let totalActualAvailableForDiscount = totalOldCompanyBalance + currentOrderCompanyProfit;
-            let finalCompanyProfitEntry = 0;
-            let finalDiscountEntry = 0;
-            if (totalActualAvailableForDiscount >= totalDiscount) {
-                finalCompanyProfitEntry = currentOrderCompanyProfit - totalDiscount;
-                finalDiscountEntry = 0;
-            } else {
-                finalCompanyProfitEntry = -totalOldCompanyBalance;
-                finalDiscountEntry = totalDiscount - totalActualAvailableForDiscount;
-            }
-            const ledgerTask = supabaseClient.from('ledger').insert([{
-                driver_id: String(currentUserData.id),
-                order_id: String(order.id),
-                total_cash: totalCashToReceive,
-                company_profit: finalCompanyProfitEntry,
-                discount: finalDiscountEntry,
-                driver_share: currentOrderDriverShare,
-                created_at: new Date()
-            }]);
-            const updatePublicTask = supabaseClient.from('sh_public_orders').update({ status: 'completed' }).eq('id', currentOrderID);
-            const updateOrdersTask = supabaseClient.from('orders').update({ status: 'completed' }).eq('id', currentOrderID);
-            await Promise.all([ledgerTask, updatePublicTask, updateOrdersTask]);
-            siteNotify(`تم التسليم بنجاح! 🦅 حصتك: ${currentOrderDriverShare.toLocaleString()}`);
-            localStorage.removeItem('active_order_id');
-            currentOrderID = null;
-            inputCodeField.value = ""; 
-            closeConfirmModal();
-            updateWalletUI();
-            initSystem();
-            nav('p-wallet');
-        } catch (err) {
-            siteNotify("خطأ: " + err.message);
-            btn.disabled = false; btn.innerText = "نعم، قبضت";
-        } finally {
-            if(btn.innerText === "جاري التسجيل...") { btn.disabled = false; btn.innerText = "نعم، قبضت"; }
-            refreshOrders();
-        }
-    }
-
-    async function reconnectActiveOrder(key) {
-        const { data: order } = await supabaseClient.from('sh_public_orders').select('*').eq('id', key).single();
-        if(order) {
-            document.getElementById('active-res-name').innerText = order.res || order.res_name;
-            let discountInfo = order.discount > 0 ? `<br><b style="color:#e74c3c;">تم استخدام خصم: -${order.discount} ل.س</b>` : "";
-            const billOnly = (parseFloat(order.total) || 0) - (parseFloat(order.delivery_price) || 0); 
-            document.getElementById('active-bill-info').innerHTML = `<small style="display:block; color:var(--gold); font-weight:bold; margin-bottom:5px;">رقم الطلب: #${order.id}</small><b>العميل:</b> ${order.customer_name}<br><b>المبلغ المطلوب:</b> ${order.total} ل.س<br><b>سعر التوصيل:</b> ${order.delivery_price} ل.س<br><b>حساب المطعم:</b> ${billOnly} ل.س ${discountInfo}`;
-            if(order.restaurant_note) {
-                const noteBox = document.getElementById('res-status-notification');
-                const noteText = document.getElementById('res-status-text');
-                if(noteBox && noteText) {
-                    noteBox.style.display = 'block';
-                    noteText.innerText = payload.new.restaurant_note;
-                }
-            }
-            if(order.phone) {
-                const waUrl = `https://wa.me/${order.phone}`;
-                if(document.getElementById('whatsapp-direct-btn-large')) document.getElementById('whatsapp-direct-btn-large').onclick = () => window.open(waUrl);
-            }
-        }
-    }
-
-    async function openMap(target) {
-        if(!currentOrderID) return;
-        const { data: order } = await supabaseClient.from('sh_public_orders').select('*').eq('id', currentOrderID).single();
-        if(!order) return;
-        
-        let query = "";
-        if(target === 'customer') {
-            if(order.lat && order.lng) {
-                window.open(`https://www.google.com/maps/search/?api=1&query=${order.lat},${order.lng}`);
-                return;
-            }
-            query = order.customer_address || "موقع العميل";
-        } else {
-            query = order.res_address || order.res || order.res_name || "المطعم";
-        }
-        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`);
-    }
-    
-    function sendMsg() { }
-    function sendQuickMsg(txt) { }
-    function sendPhotoMsg(input) { }
-    function openClientWhatsapp() { }
-
-    async function handleFileUpload(input) {
-        if (!input.files || input.files.length === 0) return;
-        const file = input.files[0];
-        const fileName = `${currentUserData.id}_${Date.now()}.jpg`;
-        siteNotify("جاري رفع صورة الصقر...");
-        const { data: up, error: err } = await supabaseClient.storage.from('avatars').upload(fileName, file, {cacheControl: '3600', upsert: true});
-        if (err) { siteNotify("فشل الرفع"); return; }
-        const { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(fileName);
-        await supabaseClient.from('drivers').update({ image_url: publicUrl }).eq('id', currentUserData.id);
-        document.getElementById('driver-img-display').src = publicUrl;
-        siteNotify("تم تحديث صورتك بنجاح! 🦅");
-    }
-
-    async function loadPaymentHistoryUI() {
-        if(!currentUserData) return;
-        const { data } = await supabaseClient.from('driver_payments').select('*').eq('driver_id', currentUserData.id).order('created_at', { ascending: false });
-        const list = document.getElementById('payment-history-list');
-        list.innerHTML = "";
-        if(data && data.length > 0) {
-            data.forEach(p => {
-                list.innerHTML += `<div class=\"payment-record-card\"><b>دفع مبلغ:</b> ${p.amount} ل.س <br><small>تاريخ: ${new Date(p.created_at).toLocaleDateString('ar-SY')}</small></div>`;
-            });
-        } else {
-            list.innerHTML = "<p style='text-align:center; color:#888; font-size:12px;'>لا يوجد سجلات دفع حالية</p>";
-        }
-    }
-
-    function checkActiveAndNav() { 
-        if(currentOrderID) {
-            nav('p-active-order');
-        } else {
-            siteNotify("لا يوجد طلب نشط حالياً.. قنص طلب أولاً 🦅");
-        }
-    }
-    
-    window.addEventListener('DOMContentLoaded', () => {
-        initSystem();
-    });
-</script>
+    </script>
 </body>
 </html>
