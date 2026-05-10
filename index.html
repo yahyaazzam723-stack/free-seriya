@@ -90,11 +90,9 @@
             z-index: -1;
         }
 
-        /* تعديل الفيديو ليعمل على الجوال بالكامل بجودة عالية */
         #hero-video {
             width: 100%; height: 100%;
             object-fit: cover;
-            /* لضمان تشغيل الفيديو على الجوال المتصفحات تطلب muted و playsinline */
         }
 
         .overlay {
@@ -184,7 +182,6 @@
             object-fit: cover;
             opacity: 0.6;
             transition: 0.5s;
-            image-rendering: -webkit-optimize-contrast; /* تحسين جودة الصور */
         }
 
         .category-item:hover img {
@@ -265,7 +262,8 @@
             width: 100%; height: 100%;
             object-fit: cover;
             transition: 0.6s;
-            image-rendering: auto; /* تحسين الصور */
+            /* تحسين عرض الصور على الجوال */
+            image-rendering: -webkit-optimize-contrast;
         }
 
         .insta-item:hover img { transform: scale(1.1); filter: brightness(0.6); }
@@ -315,7 +313,7 @@
         }
 
         .contact-box:hover { transform: scale(1.05); background: #222; }
-        .contact-box i { color: var(--primary-color); font-size: 1.5rem; }
+        .contact-box i { color: #25d366; font-size: 1.8rem; } /* WhatsApp Green Color */
         .contact-box span { font-weight: bold; font-size: 1.1rem; }
 
         .social-links { margin-bottom: 20px; }
@@ -528,9 +526,9 @@
                 <h3>المشروبات والغازيات</h3>
                 <div class="menu-item"><span class="name">عبوات عائلية (بيبسي / تفاح)</span><span class="price">17,000 SYP</span></div>
                 <div class="menu-item"><span class="name">عبوات عائلية (كوكا كولا / فينيتا)</span><span class="price">14,000 SYP</span></div>
-                <div class="menu-item"><span class="name">عبوات لتر (بيبسي / سفن / ميراندا / تفاح / سبيريت)</span><span class="price">10,000 SYP</span></div>
+                <div class="menu-item"><span class="name">عبوات لتر (تشكيلة منوعة)</span><span class="price">10,000 SYP</span></div>
                 <div class="menu-item"><span class="name">بيبسي تنك كبيرة / زويا بلور</span><span class="price">7,000 SYP</span></div>
-                <div class="menu-item"><span class="name">كولا طبوش / لبن عيران / مياه كبيرة / ماتريكس</span><span class="price">5,000 SYP</span></div>
+                <div class="menu-item"><span class="name">كولا طبوش / عيران / مياه كبيرة / ماتريكس</span><span class="price">5,000 SYP</span></div>
                 <div class="menu-item"><span class="name">بيبسي تنك صغيرة / مياه صغيرة</span><span class="price">3,000 SYP</span></div>
             </div>
         </div>
@@ -559,14 +557,11 @@
             <div class="insta-item"><img src="https://i.ibb.co/G3NMm6sn/image.jpg" alt="Dish 1"></div>
             <div class="insta-item"><img src="https://i.ibb.co/mrS7QCvy/image.jpg" alt="Dish 2"></div>
             <div class="insta-item"><img src="https://i.ibb.co/mr47C1h5/image.jpg" alt="Dish 3"></div>
-            <div class="insta-item"><img src="https://i.ibb.co/G3NMm6sn/image.jpg" alt="Dish 4"></div>
-            <div class="insta-item"><img src="https://i.ibb.co/mrS7QCvy/image.jpg" alt="Dish 5"></div>
-            <div class="insta-item"><img src="https://i.ibb.co/mr47C1h5/image.jpg" alt="Dish 6"></div>
-            <div class="insta-item"><img src="https://i.ibb.co/FqNmJ354/image.jpg" alt="Dish 7"></div>
-            <div class="insta-item"><img src="https://i.ibb.co/zVS7J2S6/image.jpg" alt="Dish 8"></div>
-            <div class="insta-item"><img src="https://i.ibb.co/pBbzZmxY/image.jpg" alt="Dish 9"></div>
-            <div class="insta-item"><img src="https://i.ibb.co/ynK030cb/image.jpg" alt="Dish 10"></div>
-            <div class="insta-item"><img src="https://i.ibb.co/hRmPNTGk/image.jpg" alt="Dish 11"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/FqNmJ354/image.jpg" alt="Dish 4"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/zVS7J2S6/image.jpg" alt="Dish 5"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/pBbzZmxY/image.jpg" alt="Dish 6"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/ynK030cb/image.jpg" alt="Dish 7"></div>
+            <div class="insta-item"><img src="https://i.ibb.co/hRmPNTGk/image.jpg" alt="Dish 8"></div>
         </div>
     </section>
 
@@ -575,18 +570,18 @@
         <div class="contact-container">
             <a href="https://wa.me/963932221340" target="_blank" class="contact-box">
                 <i class="fab fa-whatsapp"></i>
-                <span>0932221340</span>
+                <span>واتساب: 0932221340</span>
             </a>
             <a href="https://wa.me/963945695694" target="_blank" class="contact-box">
                 <i class="fab fa-whatsapp"></i>
-                <span>0945695694</span>
+                <span>واتساب: 0945695694</span>
             </a>
-            <a href="tel:0132535511" class="contact-box">
-                <i class="fas fa-phone"></i>
-                <span>0132535511</span>
+            <a href="https://wa.me/963132535511" target="_blank" class="contact-box">
+                <i class="fab fa-whatsapp"></i>
+                <span>واتساب: 0132535511</span>
             </a>
             <a href="https://maps.google.com/?q=35.1311,36.7578" target="_blank" class="contact-box">
-                <i class="fas fa-map-marker-alt"></i>
+                <i class="fas fa-map-marker-alt" style="color:var(--primary-color)"></i>
                 <span>موقعنا على الخريطة</span>
             </a>
         </div>
@@ -613,12 +608,11 @@
             if (window.scrollY > 100) nav.classList.add('scrolled');
             else nav.classList.remove('scrolled');
         });
-        
-        /* كود إضافي لضمان تشغيل الفيديو على الجوال في حال فشل التشغيل التلقائي */
+
         document.addEventListener('DOMContentLoaded', function() {
             var video = document.getElementById('hero-video');
             video.play().catch(function(error) {
-                console.log("Autoplay was prevented, waiting for user interaction.");
+                console.log("Autoplay was prevented.");
             });
         });
     </script>
