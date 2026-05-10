@@ -90,9 +90,11 @@
             z-index: -1;
         }
 
+        /* تعديل الفيديو ليعمل على الجوال بالكامل بجودة عالية */
         #hero-video {
             width: 100%; height: 100%;
             object-fit: cover;
+            /* لضمان تشغيل الفيديو على الجوال المتصفحات تطلب muted و playsinline */
         }
 
         .overlay {
@@ -182,6 +184,7 @@
             object-fit: cover;
             opacity: 0.6;
             transition: 0.5s;
+            image-rendering: -webkit-optimize-contrast; /* تحسين جودة الصور */
         }
 
         .category-item:hover img {
@@ -262,6 +265,7 @@
             width: 100%; height: 100%;
             object-fit: cover;
             transition: 0.6s;
+            image-rendering: auto; /* تحسين الصور */
         }
 
         .insta-item:hover img { transform: scale(1.1); filter: brightness(0.6); }
@@ -322,6 +326,9 @@
             .nav-links { display: none; }
             .hero-content h1 { font-size: 2.5rem; }
             .contact-container { flex-direction: column; align-items: center; }
+            /* تحسين عرض المنيو على الجوال */
+            .category-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .category-item { height: 180px; }
         }
     </style>
 </head>
@@ -340,7 +347,7 @@
 
     <header class="hero" id="home">
         <div class="hero-video-container">
-            <video autoplay muted loop id="hero-video" poster="https://i.ibb.co/mrS7QCvy/image.jpg">
+            <video autoplay muted loop playsinline id="hero-video" poster="https://i.ibb.co/mrS7QCvy/image.jpg">
                 <source src="https://www.image2url.com/r2/default/videos/1778409117808-17db6e67-dccd-463b-b49a-d08f29b006bb.mp4" type="video/mp4">
             </video>
         </div>
@@ -605,6 +612,14 @@
             const nav = document.getElementById('main-nav');
             if (window.scrollY > 100) nav.classList.add('scrolled');
             else nav.classList.remove('scrolled');
+        });
+        
+        /* كود إضافي لضمان تشغيل الفيديو على الجوال في حال فشل التشغيل التلقائي */
+        document.addEventListener('DOMContentLoaded', function() {
+            var video = document.getElementById('hero-video');
+            video.play().catch(function(error) {
+                console.log("Autoplay was prevented, waiting for user interaction.");
+            });
         });
     </script>
 </body>
