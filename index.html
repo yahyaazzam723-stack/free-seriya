@@ -120,6 +120,27 @@
         .invoice-box { background: var(--purple); border: 2px solid var(--gold); border-radius: 20px; padding: 20px; width: 90%; max-height: 80%; overflow-y: auto; position: relative; }
         .invoice-title { color: var(--gold); font-size: 18px; text-align: center; margin-bottom: 15px; border-bottom: 1px dashed var(--gold); padding-bottom: 10px; }
         .invoice-content { font-size: 14px; line-height: 1.6; white-space: pre-wrap; color: #fff; }
+
+        /* تمييز طلبات الصيدلية بلون أزرق فاتح كامل عند المندوب */
+        .pharmacy-driver-card {
+            background: linear-gradient(135deg, #0d2a4a, #1a4a7a) !important;
+            border: 2px solid #3498db !important;
+            box-shadow: 0 0 18px rgba(52,152,219,0.5) !important;
+        }
+        .pharmacy-driver-card * { color: #e8f4fd !important; }
+        .pharmacy-driver-card b { color: #7ec8f7 !important; }
+        .pharmacy-driver-card .btn-gold { background: #3498db !important; color: #fff !important; border: 1px solid #5dade2 !important; }
+        /* نافذة تأكيد التسليم مع تفاصيل المبلغ الديناميكية */
+        #delivery-confirm-details { background: linear-gradient(135deg, #0a1f36, #0d2a4a); border: 2px solid #3498db; border-radius: 12px; padding: 12px; margin: 10px 0; text-align: right; }
+        #delivery-confirm-details .amount-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; border-bottom: 1px solid rgba(52,152,219,0.2); }
+        #delivery-confirm-details .amount-row:last-child { border-bottom: none; font-size: 14px; font-weight: bold; color: #3498db; padding-top: 8px; }
+        #delivery-confirm-details .amount-label { color: #a8c8ff; }
+        #delivery-confirm-details .amount-value { color: #fff; font-weight: bold; }
+
+        /* إخفاء شريط التنقل في صفحة المحفظة */
+        #p-wallet.active ~ #main-tabs,
+        #p-wallet.active + #main-tabs { display: none !important; }
+        #p-wallet.active { padding-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -138,11 +159,26 @@
     <div id="confirm-modal">
         <i class="fas fa-handholding-usd" style="font-size: 30px; color: var(--gold); margin-bottom: 10px;"></i>
         <h3 style="margin: 0 0 6px; font-size: 14px;">تأكيد قبض المبلغ</h3>
-        <p style="font-size: 11px; color: #ccc;">هل أنت متأكد يا صقر أنك قبضت المبلغ كامل من العميل؟</p>
-        <div id="cash-to-receive-display" style="background: rgba(212, 175, 55, 0.1); padding: 6px; border-radius: 6px; margin-bottom: 10px; color: var(--gold); font-weight: bold; border: 1px dashed var(--gold); font-size: 12px;"></div>
+        <p style="font-size: 11px; color: #ccc; margin-bottom: 8px;">هل أنت متأكد يا صقر أنك استلمت المبلغ الكامل من العميل؟</p>
+        <div id="delivery-confirm-details">
+            <div class="amount-row">
+                <span class="amount-label">💊 فاتورة الصيدلية/المطعم (X):</span>
+                <span class="amount-value" id="confirm-x-value">٠ ل.س</span>
+            </div>
+            <div class="amount-row">
+                <span class="amount-label">🛵 مبلغ التوصيل (Y):</span>
+                <span class="amount-value" id="confirm-y-value">٠ ل.س</span>
+            </div>
+            <div class="amount-row" style="margin-top: 4px;">
+                <span class="amount-label">💰 المجموع المطلوب استلامه (J = X + Y):</span>
+                <span class="amount-value" id="confirm-j-value" style="font-size: 16px; color: #3498db;">٠ ل.س</span>
+            </div>
+        </div>
+        <p style="font-size: 10px; color: #e74c3c; font-weight: bold; margin: 6px 0; text-align: center;">⚠️ يرجى التأكد من استلام المبلغ كاملاً قبل المتابعة</p>
+        <div id="cash-to-receive-display" style="background: rgba(212, 175, 55, 0.1); padding: 6px; border-radius: 6px; margin-bottom: 10px; color: var(--gold); font-weight: bold; border: 1px dashed var(--gold); font-size: 12px; display: none;"></div>
         <input type="text" id="delivery-verify-code" class="auth-input" placeholder="أدخل كود التحقق من العميل" style="margin-top: 4px; border-color: var(--gold); border-style: dashed;">
         <div style="display: flex; gap: 8px; margin-top: 12px;">
-            <button class="btn-gold" id="btn-confirm-delivery" style="margin:0; background: #2ecc71; color: #fff;" onclick="executeFinishOrder()">نعم، قبضت</button>
+            <button class="btn-gold" id="btn-confirm-delivery" style="margin:0; background: #2ecc71; color: #fff;" onclick="executeFinishOrder()">نعم، استلمت المبلغ كاملاً ✅</button>
             <button class="btn-gold" style="margin:0; background: #e74c3c; color: #fff;" onclick="closeConfirmModal()">تراجع</button>
         </div>
     </div>
@@ -350,6 +386,7 @@
             <i class="fas fa-bell" style="color: #2ecc71; margin-left: 4px;"></i>
             <span id="res-status-text" style="color: #fff; font-size: 10px; font-weight: bold;">جاري تحضير الطلب...</span>
         </div>
+        <button id="toggle-res-status-btn" style="display:none; background: rgba(52,152,219,0.15); border: 1px solid #3498db; color: #3498db; padding: 5px 10px; border-radius: 8px; font-size: 9px; cursor: pointer; margin-bottom: 6px; width: 100%; font-weight: bold;" onclick="document.getElementById('res-status-notification').style.display = document.getElementById('res-status-notification').style.display === 'none' ? 'block' : 'none';"></button>
 
         <button class="btn-gold" style="background:var(--purple); color:#fff; height: 35px; border: 1px solid var(--gold); font-size: 12px;" onclick="openConfirmModal()">أدخل الكود (تم التسليم) ✅</button>
     </div>
@@ -422,62 +459,43 @@
         if(!code || !email) { siteNotify("الرجاء إدخل الإيميل وكود التفعيل يا صقر"); return; }
         btn.disabled = true; btn.innerText = "جاري التحقق...";
 
-        // أولاً: محاولة تسجيل الدخول عبر Supabase Auth (للمناديب المسجلين عبر Auth)
         const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
             email: email,
             password: code
         });
 
-        if (!authError && authData?.user) {
-            // نجح عبر Auth — ابحث عن ملفه في drivers
-            const { data: driverInfo, error: dbError } = await supabaseClient
-                .from('drivers')
-                .select('*')
-                .eq('id', authData.user.id)
-                .single();
-
-            if (dbError || !driverInfo) {
-                siteNotify("لم يتم العثور على ملف الصقر في سجلات الإدارة");
-                btn.disabled = false; btn.innerText = "دخول النظام";
-                return;
+        if (authError) {
+            let errorMsg = authError.message;
+            if (errorMsg.includes("Email not confirmed")) {
+                errorMsg = "حسابك يحتاج تفعيل من الإدارة. يرجى التواصل مع المدير فوراً 🦅";
+            } else if (errorMsg === "Invalid login credentials") {
+                errorMsg = "تأكد من الإيميل والكود بشكل صحيح 🦅";
             }
-
-            if (driverInfo.status !== 'active') {
-                document.getElementById('suspend-msg').innerText = "حسابك غير نشط حالياً، راجع الإدارة";
-                document.getElementById('suspend-modal').style.display = 'flex';
-                btn.disabled = false; btn.innerText = "دخول النظام";
-                return;
-            }
-
-            currentUserData = { ...authData.user, ...driverInfo };
-            localStorage.setItem('shaheen_driver', JSON.stringify(currentUserData));
-            siteNotify("تم تسجيل الدخول بنجاح! 🦅");
-            initSystem();
-            return;
-        }
-
-        // ثانياً: Auth فشل — ابحث مباشرة في جدول drivers بالإيميل والكود (للمناديب اليدويين)
-        const { data: manualDriver, error: manualError } = await supabaseClient
-            .from('drivers')
-            .select('*')
-            .eq('email', email)
-            .eq('activation_code', code)
-            .single();
-
-        if (manualError || !manualDriver) {
-            siteNotify("تأكد من الإيميل والكود بشكل صحيح 🦅");
+            siteNotify("فشل الدخول: " + errorMsg);
             btn.disabled = false; btn.innerText = "دخول النظام";
             return;
         }
 
-        if (manualDriver.status !== 'active') {
+        const { data: driverInfo, error: dbError } = await supabaseClient
+            .from('drivers')
+            .select('*')
+            .eq('id', authData.user.id)
+            .single();
+
+        if (dbError || !driverInfo) {
+            siteNotify("لم يتم العثور على ملف الصقر في سجلات الإدارة");
+            btn.disabled = false; btn.innerText = "دخول النظام";
+            return;
+        }
+
+        if (driverInfo.status !== 'active') {
             document.getElementById('suspend-msg').innerText = "حسابك غير نشط حالياً، راجع الإدارة";
             document.getElementById('suspend-modal').style.display = 'flex';
             btn.disabled = false; btn.innerText = "دخول النظام";
             return;
         }
 
-        currentUserData = { id: manualDriver.id, ...manualDriver };
+        currentUserData = { ...authData.user, ...driverInfo };
         localStorage.setItem('shaheen_driver', JSON.stringify(currentUserData));
         siteNotify("تم تسجيل الدخول بنجاح! 🦅");
         initSystem();
@@ -818,7 +836,8 @@
                 else if(o.res_type === 'wassayni') { typeIcon = '<i class="fas fa-paper-plane"></i>'; typeLabel = "وصيني"; typeColor = "#2ecc71"; }
 
                 list.innerHTML += `
-                    <div class="card" style="border-right: 3px solid ${typeColor}; padding: 6px;">
+                    <div class="card ${(o.res_type === 'pharmacy' || o.res_type === 'pharmacy_delivery') ? 'pharmacy-driver-card' : ''}" style="border-right: 3px solid ${typeColor}; padding: 6px;">
+                        ${(o.res_type === 'pharmacy' || o.res_type === 'pharmacy_delivery') ? '<div style="background:#3498db; color:#fff; font-size:9px; padding:3px 8px; border-radius:6px; margin-bottom:5px; text-align:center; font-weight:bold;"><i class="fas fa-prescription-bottle-alt"></i> 🏥 طلب صيدلية — اللون الأزرق يميز هذا الطلب</div>' : ''}
                         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:3px;">
                             <div>
                                 <small style="display:block; color:${typeColor}; font-weight:bold; font-size:8px; margin-bottom:1px;">#${o.id} | <span id="dist-${o.id}">${distanceText}</span></small>
@@ -975,9 +994,15 @@
 
     async function openConfirmModal() {
         if(!currentOrderID) return;
-        const { data: order } = await supabaseClient.from('sh_public_orders').select('total').eq('id', currentOrderID).single();
+        const { data: order } = await supabaseClient.from('sh_public_orders').select('total, delivery_price').eq('id', currentOrderID).single();
         if(order) {
-            document.getElementById('cash-to-receive-display').innerText = `المبلغ المطلوب استلامه نقداً: ${order.total.toLocaleString()} ل.س`;
+            const X = (parseFloat(order.total) || 0) - (parseFloat(order.delivery_price) || 0);
+            const Y = parseFloat(order.delivery_price) || 0;
+            const J = X + Y;
+            if(document.getElementById('confirm-x-value')) document.getElementById('confirm-x-value').innerText = X.toLocaleString() + ' ل.س';
+            if(document.getElementById('confirm-y-value')) document.getElementById('confirm-y-value').innerText = Y.toLocaleString() + ' ل.س';
+            if(document.getElementById('confirm-j-value')) document.getElementById('confirm-j-value').innerText = J.toLocaleString() + ' ل.س';
+            document.getElementById('cash-to-receive-display').innerText = `المبلغ الإجمالي المطلوب استلامه: ${J.toLocaleString()} ل.س`;
         }
         document.getElementById('confirm-modal').classList.add('active');
     }
@@ -1074,14 +1099,26 @@
             document.getElementById('active-res-name').style.color = typeColor;
             document.getElementById('active-res-name').innerHTML = `${typeIcon} ${typeLabel}: ${order.restaurant_name || order.res || order.res_name}`;
             let discountInfo = order.discount > 0 ? `<br><b style="color:#e74c3c;">تم استخدام خصم: -${order.discount} ل.س</b>` : "";
-            const billOnly = (parseFloat(order.total) || 0) - (parseFloat(order.delivery_price) || 0); 
-            document.getElementById('active-bill-info').innerHTML = `<small style="display:block; color:var(--gold); font-weight:bold; margin-bottom:3px;">رقم الطلب: #${order.id}</small><b>العميل:</b> ${order.customer_name}<br><b>المبلغ المطلوب:</b> ${order.total} ل.س<br><b>سعر التوصيل:</b> ${order.delivery_price} ل.س<br><b>حساب المتجر:</b> ${billOnly} ل.س ${discountInfo}`;
+            // X = فاتورة المتجر/الصيدلية = (الإجمالي - سعر التوصيل)
+            const X = (parseFloat(order.total) || 0) - (parseFloat(order.delivery_price) || 0);
+            // Y = مبلغ التوصيل من قاعدة البيانات
+            const Y = parseFloat(order.delivery_price) || 0;
+            // J = المجموع الكلي الديناميكي = X + Y
+            const J = X + Y;
+            document.getElementById('active-bill-info').innerHTML = `<small style="display:block; color:var(--gold); font-weight:bold; margin-bottom:3px;">رقم الطلب: #${order.id}</small><b>العميل:</b> ${order.customer_name}<br><b>فاتورة المتجر/الصيدلية (X):</b> ${X.toLocaleString()} ل.س<br><b>سعر التوصيل (Y):</b> ${Y.toLocaleString()} ل.س<br><b style="color:#3498db; font-size:13px;">💰 المبلغ المطلوب تحصيله (J = X+Y):</b> <span style="font-size:15px; font-weight:bold; color:#fff;">${J.toLocaleString()} ل.س</span> ${discountInfo}`;
+            const isPharmacyOrder = (order.res_type === 'pharmacy' || order.res_type === 'pharmacy_delivery');
+            if(isPharmacyOrder) {
+                // إضافة بادج تحذيري للصيدلية في أعلى معلومات الطلب
+                document.getElementById('active-bill-info').innerHTML = `<div style="background:#3498db; color:#fff; padding:5px 10px; border-radius:8px; margin-bottom:8px; text-align:center; font-weight:bold; font-size:10px;"><i class="fas fa-prescription-bottle-alt"></i> 🏥 طلب صيدلية — ألوان زرقاء مميزة</div>` + document.getElementById('active-bill-info').innerHTML;
+            }
             if(order.restaurant_note) {
                 const noteBox = document.getElementById('res-status-notification');
                 const noteText = document.getElementById('res-status-text');
                 if(noteBox && noteText) {
-                    noteBox.style.display = 'block';
+                    noteBox.style.display = 'none';
                     noteText.innerText = order.restaurant_note;
+                    const toggleBtn = document.getElementById('toggle-res-status-btn');
+                    if(toggleBtn) { toggleBtn.style.display = 'flex'; toggleBtn.innerHTML = '<i class="fas fa-file-alt"></i> 📋 تفاصيل الرسالة'; }
                 }
             }
             if(order.phone) {
