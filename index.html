@@ -422,43 +422,62 @@
         if(!code || !email) { siteNotify("الرجاء إدخل الإيميل وكود التفعيل يا صقر"); return; }
         btn.disabled = true; btn.innerText = "جاري التحقق...";
 
+        // أولاً: محاولة تسجيل الدخول عبر Supabase Auth (للمناديب المسجلين عبر Auth)
         const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
             email: email,
             password: code
         });
 
-        if (authError) {
-            let errorMsg = authError.message;
-            if (errorMsg.includes("Email not confirmed")) {
-                errorMsg = "حسابك يحتاج تفعيل من الإدارة. يرجى التواصل مع المدير فوراً 🦅";
-            } else if (errorMsg === "Invalid login credentials") {
-                errorMsg = "تأكد من الإيميل والكود بشكل صحيح 🦅";
+        if (!authError && authData?.user) {
+            // نجح عبر Auth — ابحث عن ملفه في drivers
+            const { data: driverInfo, error: dbError } = await supabaseClient
+                .from('drivers')
+                .select('*')
+                .eq('id', authData.user.id)
+                .single();
+
+            if (dbError || !driverInfo) {
+                siteNotify("لم يتم العثور على ملف الصقر في سجلات الإدارة");
+                btn.disabled = false; btn.innerText = "دخول النظام";
+                return;
             }
-            siteNotify("فشل الدخول: " + errorMsg);
-            btn.disabled = false; btn.innerText = "دخول النظام";
+
+            if (driverInfo.status !== 'active') {
+                document.getElementById('suspend-msg').innerText = "حسابك غير نشط حالياً، راجع الإدارة";
+                document.getElementById('suspend-modal').style.display = 'flex';
+                btn.disabled = false; btn.innerText = "دخول النظام";
+                return;
+            }
+
+            currentUserData = { ...authData.user, ...driverInfo };
+            localStorage.setItem('shaheen_driver', JSON.stringify(currentUserData));
+            siteNotify("تم تسجيل الدخول بنجاح! 🦅");
+            initSystem();
             return;
         }
 
-        const { data: driverInfo, error: dbError } = await supabaseClient
+        // ثانياً: Auth فشل — ابحث مباشرة في جدول drivers بالإيميل والكود (للمناديب اليدويين)
+        const { data: manualDriver, error: manualError } = await supabaseClient
             .from('drivers')
             .select('*')
-            .eq('id', authData.user.id)
+            .eq('email', email)
+            .eq('activation_code', code)
             .single();
 
-        if (dbError || !driverInfo) {
-            siteNotify("لم يتم العثور على ملف الصقر في سجلات الإدارة");
+        if (manualError || !manualDriver) {
+            siteNotify("تأكد من الإيميل والكود بشكل صحيح 🦅");
             btn.disabled = false; btn.innerText = "دخول النظام";
             return;
         }
 
-        if (driverInfo.status !== 'active') {
+        if (manualDriver.status !== 'active') {
             document.getElementById('suspend-msg').innerText = "حسابك غير نشط حالياً، راجع الإدارة";
             document.getElementById('suspend-modal').style.display = 'flex';
             btn.disabled = false; btn.innerText = "دخول النظام";
             return;
         }
 
-        currentUserData = { ...authData.user, ...driverInfo };
+        currentUserData = { id: manualDriver.id, ...manualDriver };
         localStorage.setItem('shaheen_driver', JSON.stringify(currentUserData));
         siteNotify("تم تسجيل الدخول بنجاح! 🦅");
         initSystem();
