@@ -375,6 +375,23 @@
         <button id="cancel-consult-btn" class="btn-gold" style="width: 70%; margin-top: 25px; background: #555; color: #fff;" onclick="cancelOrder()">إلغاء الطلب</button>
     </div>
 
+    <!-- نافذة تأكيد تفعيل البريد الإلكتروني - داخل التطبيق -->
+    <div id="email-verify-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:30000; display:none; align-items:center; justify-content:center; padding:25px;">
+        <div style="background:var(--purple); border:2px solid var(--gold); border-radius:25px; padding:25px; width:100%; text-align:center; box-shadow:0 0 30px rgba(212,175,55,0.4); animation: scaleUp 0.3s ease-out;">
+            <div style="font-size:48px; margin-bottom:10px;">✉️</div>
+            <h3 style="color:var(--gold); font-size:17px; margin:0 0 12px 0;">تم إنشاء حسابك بنجاح!</h3>
+            <div style="background:rgba(212,175,55,0.08); border:1px dashed var(--gold); border-radius:14px; padding:14px; margin-bottom:14px; text-align:right; line-height:1.9;">
+                <p style="margin:0 0 8px 0; font-size:13px; color:#fff;">📧 تم إرسال رابط التفعيل إلى:</p>
+                <p id="verify-email-display" style="margin:0 0 10px 0; font-size:13px; color:var(--gold); font-weight:bold; word-break:break-all; text-align:center;"></p>
+                <p style="margin:0; font-size:12px; color:#ccc;">اضغط على رابط التفعيل الموجود في الرسالة لتفعيل حسابك والدخول.</p>
+            </div>
+            <div style="background:rgba(231,76,60,0.1); border:1px solid rgba(231,76,60,0.3); border-radius:10px; padding:10px; margin-bottom:16px; text-align:right;">
+                <p style="margin:0; font-size:11px; color:#f39c12;">⚠️ إذا لم تجد الرسالة، تحقق من مجلد <b>الرسائل غير المرغوب فيها</b></p>
+            </div>
+            <button class="btn-gold" style="font-size:13px; padding:12px;" onclick="document.getElementById('email-verify-overlay').style.display='none';">حسناً، سأتحقق من بريدي ✅</button>
+        </div>
+    </div>
+
     <div id="p-login" class="page active" style="justify-content:center; text-align:center;">
         <div style="display: flex; justify-content: center; width: 100%; margin-bottom: 20px;">
             <img src="https://i.postimg.cc/QxzPkmPf/Whats-App-Image-2026-04-10-at-6-22-30-PM-t7edrz.jpg" width="100" style="border-radius:25px; border:2px solid var(--gold);">
@@ -800,28 +817,80 @@
         hideForgotPasswordUI();
     }
 
+    // ===== حماية من السبام وتكرار طلبات إنشاء الحساب =====
+    let _registerInProgress = false;
+    let _lastRegisterAttempt = 0;
+    const _REGISTER_COOLDOWN_MS = 60000; // دقيقة كاملة بين كل محاولتين
+
     async function registerUser() {
+        // ===== منع التكرار: إذا كان هناك طلب قيد التنفيذ، لا نرسل مجدداً =====
+        if (_registerInProgress) return showNotify("يرجى الانتظار، جاري إنشاء حسابك...", "info");
+
+        // ===== منع السبام: فحص الوقت منذ آخر محاولة =====
+        const _now = Date.now();
+        if (_lastRegisterAttempt > 0 && (_now - _lastRegisterAttempt) < _REGISTER_COOLDOWN_MS) {
+            const _remaining = Math.ceil((_REGISTER_COOLDOWN_MS - (_now - _lastRegisterAttempt)) / 1000);
+            return showNotify("يرجى الانتظار " + _remaining + " ثانية قبل المحاولة مجدداً", "error");
+        }
+
         const n = document.getElementById('uName').value;
         const e = document.getElementById('uEmail').value;
         const p = document.getElementById('uPass').value;
         const ph = document.getElementById('uPhone').value;
         const addr = document.getElementById('uAddress').value;
         if(!n || !e || !p || !ph || !addr) return showNotify("يرجى إكمال كافة الحقول", "error");
-        
+
+        // ===== تعطيل الزر وإظهار Loading =====
+        const _authBtn = document.getElementById('auth-btn');
+        const _originalBtnText = _authBtn ? _authBtn.innerText : '';
+        if (_authBtn) {
+            _authBtn.disabled = true;
+            _authBtn.innerText = '⏳ جاري إنشاء الحساب...';
+            _authBtn.style.opacity = '0.7';
+            _authBtn.style.pointerEvents = 'none';
+        }
+
+        _registerInProgress = true;
+        _lastRegisterAttempt = Date.now();
+
+        try {
         const { data: authResult, error } = await _supabase.auth.signUp({
             email: e,
             password: p,
             options: { data: { full_name: n, phone: ph, address: addr }, emailRedirectTo: null }
         });
         if (error) {
-            if(error.message.includes("User already registered")) return showNotify("هذا الحساب مسجل مسبقاً، يرجى تسجيل الدخول", "error");
-            if(!error.message.includes("confirmation email") && !error.message.includes("sending")) return showNotify(error.message, "error");
+            if(error.message.includes("User already registered")) {
+                if (_authBtn) { _authBtn.disabled = false; _authBtn.innerText = _originalBtnText; _authBtn.style.opacity = ''; _authBtn.style.pointerEvents = ''; }
+                _registerInProgress = false;
+                return showNotify("هذا الحساب مسجل مسبقاً، يرجى تسجيل الدخول", "error");
+            }
+            if (error.message.includes("rate") || error.message.includes("429") || error.message.includes("too many") || error.message.includes("Too Many")) {
+                if (_authBtn) { _authBtn.disabled = false; _authBtn.innerText = _originalBtnText; _authBtn.style.opacity = ''; _authBtn.style.pointerEvents = ''; }
+                _registerInProgress = false;
+                return showNotify("تم الوصول لحد الطلبات. يرجى الانتظار دقيقة ثم المحاولة مجدداً", "error");
+            }
+            if(!error.message.includes("confirmation email") && !error.message.includes("sending")) {
+                if (_authBtn) { _authBtn.disabled = false; _authBtn.innerText = _originalBtnText; _authBtn.style.opacity = ''; _authBtn.style.pointerEvents = ''; }
+                _registerInProgress = false;
+                return showNotify(error.message, "error");
+            }
         }
 
         // تسجيل الدخول مباشرة بعد إنشاء الحساب بدون انتظار تأكيد الإيميل
         const { data: signInNow, error: signInErr } = await _supabase.auth.signInWithPassword({ email: e, password: p });
         const userId = signInNow?.user?.id || authResult?.user?.id;
-        if (!userId) { showNotify("تم إنشاء الحساب، يرجى تسجيل الدخول", "info"); toggleAuthMode(); return; }
+        if (!userId) {
+            // ===== إظهار Popup/Dialog واضح يطلب تفعيل البريد =====
+            if (_authBtn) { _authBtn.disabled = false; _authBtn.innerText = _originalBtnText; _authBtn.style.opacity = ''; _authBtn.style.pointerEvents = ''; }
+            _registerInProgress = false;
+            // إظهار نافذة منبثقة داخل التطبيق
+            document.getElementById('verify-email-display').innerText = e;
+            document.getElementById('email-verify-overlay').style.display = 'flex';
+            showNotify("تم إنشاء الحساب، تحقق من بريدك لتفعيله ✉️", "info");
+            toggleAuthMode();
+            return;
+        }
 
         showNotify("تم التسجيل! أهلاً بك يا شاهين 🦅");
         const newUser = { uid: userId, name: n, email: e, phone: ph, address: addr, points: 0, balance: 0 };
@@ -832,7 +901,21 @@
         document.getElementById('tab-bar').style.display = 'flex';
         nav('p-home');
         loadUserData();
-        toggleAuthMode(); 
+        toggleAuthMode();
+
+        } catch(_regErr) {
+            console.error('[SHAHEN] registerUser error:', _regErr);
+            showNotify("حدث خطأ غير متوقع، يرجى المحاولة لاحقاً", "error");
+        } finally {
+            // ===== إعادة الزر لحالته الطبيعية دائماً =====
+            _registerInProgress = false;
+            if (_authBtn) {
+                _authBtn.disabled = false;
+                _authBtn.innerText = _originalBtnText;
+                _authBtn.style.opacity = '';
+                _authBtn.style.pointerEvents = '';
+            }
+        }
     }
 
     async function loginUser() {
